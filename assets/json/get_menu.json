@@ -1,0 +1,32 @@
+[
+  {
+    "menuID": "M000",
+    "name": "Hamburger",
+    "price": 50
+  },
+  {
+    "menuID": "M004",
+    "name": "Kao Pad",
+    "price": 60
+  },
+  {
+    "menuID": "M003",
+    "name": "Steak",
+    "price": 150
+  },
+  {
+    "menuID": "M002",
+    "name": "Pasta",
+    "price": 100
+  },
+  {
+    "menuID": "M001",
+    "name": "KhaoPad",
+    "price": 100
+  },
+  {
+    "menuID": "M005",
+    "name": "PadThai",
+    "price": 70
+  }
+]

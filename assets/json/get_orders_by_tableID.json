@@ -1,0 +1,72 @@
+[
+  {
+    "orderID": "O001",
+    "tableId": "T001",
+    "menuOrder": [
+      {
+        "menuID": "M000",
+        "menuName": "Hamburger",
+        "menuPrice": 100
+      }
+    ],
+    "orderPrice": 100,
+    "orderStatus": "COMPLETED"
+  },
+  {
+    "orderID": "O002",
+    "tableId": "T001",
+    "menuOrder": [
+      {
+        "menuID": "M000",
+        "menuName": "Hamburger",
+        "menuPrice": 100
+      },
+      {
+        "menuID": "M004",
+        "name": "Kao Pad",
+        "price": 60
+      }
+    ],
+    "orderPrice": 160,
+    "orderStatus": "COMPLETED"
+  },
+  {
+    "orderID": "O003",
+    "tableId": "T001",
+    "menuOrder": [
+      {
+        "menuID": "M000",
+        "menuName": "Hamburger",
+        "menuPrice": 100
+      }
+    ],
+    "orderPrice": 100,
+    "orderStatus": "COMPLETED"
+  },
+  {
+    "orderID": "O003",
+    "tableId": "T001",
+    "menuOrder": [
+      {
+        "menuID": "M000",
+        "menuName": "Hamburger",
+        "menuPrice": 100
+      }
+    ],
+    "orderPrice": 100,
+    "orderStatus": "CANCELLED"
+  },
+  {
+    "orderID": "O003",
+    "tableId": "T001",
+    "menuOrder": [
+      {
+        "menuID": "M000",
+        "menuName": "Hamburger",
+        "menuPrice": 100
+      }
+    ],
+    "orderPrice": 100,
+    "orderStatus": "COMPLETED"
+  }
+]

@@ -1,1 +1,1 @@
-// dilog widget including the showDialog function
+// dialog widget including the showDialog function

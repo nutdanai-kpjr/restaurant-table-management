@@ -15,7 +15,8 @@
 //      On Edit (MenuName | -Quantity + | ConfrimButton)
 /// With Indicator
 /// 4. OrderStatusItem
-///     Pending (Table Number | CompleteButton , CancelButton)
+///     Pending (Table Number | CompleteButton , CancelButton, ExpandableButton)
+///      -Tap to see order and quantity its
 ///     Completed (Table Number)
 ///     Cancelled (Table Number)
 ///     History (Order Number))

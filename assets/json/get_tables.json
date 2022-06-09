@@ -1,0 +1,32 @@
+[
+  {
+    "stampDateTime": "2022-04-23T18:25:43.511Z",
+    "tableID": "T004",
+    "totalPrice": 0.0,
+    "status": "AVAILABLE"
+  },
+  {
+    "stampDateTime": "2022-04-23T18:25:43.511Z",
+    "tableID": "T002",
+    "totalPrice": 0.0,
+    "status": "AVAILABLE"
+  },
+  {
+    "stampDateTime": "2022-04-23T18:25:43.511Z",
+    "tableID": "T003",
+    "totalPrice": 0.0,
+    "status": "AVAILABLE"
+  },
+  {
+    "stampDateTime": "2022-04-23T18:25:43.511Z",
+    "tableID": "T000",
+    "totalPrice": 0.0,
+    "status": "AVAILABLE"
+  },
+  {
+    "stampDateTime": "2022-04-23T18:25:43.511Z",
+    "tableID": "T001",
+    "totalPrice": 0.0,
+    "status": "AVAILABLE"
+  }
+]
