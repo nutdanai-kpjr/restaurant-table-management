@@ -25,18 +25,14 @@ import 'package:restaurant_table_management/constants.dart';
 ///     Completed (Table Number)
 ///     Cancelled (Table Number)
 ///     History (Order Number))
-class PrimaryListItem extends StatelessWidget {
-  const PrimaryListItem({
+class SecondaryListItem extends StatelessWidget {
+  const SecondaryListItem({
     Key? key,
     required this.title,
-    required this.subTitle,
     required this.buttons,
-    required this.indicatorColor,
   }) : super(key: key);
-  final String subTitle;
   final String title;
   final List<Widget> buttons;
-  final Color indicatorColor;
 
   @override
   Widget build(BuildContext context) {
@@ -49,18 +45,11 @@ class PrimaryListItem extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-                flex: 1,
-                child: Container(
-                  color: indicatorColor,
-                )),
-            Expanded(
-              flex: 15,
-              child: Column(
-                children: [Text(title), Text(subTitle)],
-              ),
+              flex: 2,
+              child: Text(title),
             ),
             Expanded(
-                flex: 30,
+                flex: 3,
                 child: Row(
                   children: buttons,
                 )),

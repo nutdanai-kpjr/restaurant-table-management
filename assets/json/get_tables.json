@@ -1,32 +1,49 @@
 [
   {
     "stampDateTime": "2022-04-23T18:25:43.511Z",
-    "tableID": "T004",
+    "tableID": "T001",
     "totalPrice": 0.0,
-    "status": "AVAILABLE"
+    "status": "AVAILABLE",
+    "orderList": []
   },
+
   {
     "stampDateTime": "2022-04-23T18:25:43.511Z",
     "tableID": "T002",
     "totalPrice": 0.0,
-    "status": "AVAILABLE"
-  },
-  {
-    "stampDateTime": "2022-04-23T18:25:43.511Z",
-    "tableID": "T003",
-    "totalPrice": 0.0,
-    "status": "AVAILABLE"
-  },
-  {
-    "stampDateTime": "2022-04-23T18:25:43.511Z",
-    "tableID": "T000",
-    "totalPrice": 0.0,
-    "status": "AVAILABLE"
-  },
-  {
-    "stampDateTime": "2022-04-23T18:25:43.511Z",
-    "tableID": "T001",
-    "totalPrice": 0.0,
-    "status": "AVAILABLE"
+    "status": "INUSE",
+    "orderList": [
+      {
+        "orderID": "O001",
+        "tableID": "T001",
+        "menuOrder": [
+          {
+            "menuID": "M000",
+            "name": "Hamburger",
+            "price": 100
+          }
+        ],
+        "orderPrice": 100,
+        "orderStatus": "PENDING"
+      },
+      {
+        "orderID": "O002",
+        "tableID": "T002",
+        "menuOrder": [
+          {
+            "menuID": "M000",
+            "name": "Hamburger",
+            "price": 100
+          },
+          {
+            "menuID": "M004",
+            "name": "Kao Pad",
+            "price": 60
+          }
+        ],
+        "orderPrice": 160,
+        "orderStatus": "PENDING"
+      }
+    ]
   }
 ]

@@ -1,12 +1,12 @@
 [
   {
     "orderID": "O001",
-    "tableId": "T001",
+    "tableID": "T001",
     "menuOrder": [
       {
         "menuID": "M000",
-        "menuName": "Hamburger",
-        "menuPrice": 100
+        "name": "Hamburger",
+        "price": 100
       }
     ],
     "orderPrice": 100,
@@ -14,12 +14,12 @@
   },
   {
     "orderID": "O002",
-    "tableId": "T002",
+    "tableID": "T002",
     "menuOrder": [
       {
         "menuID": "M000",
-        "menuName": "Hamburger",
-        "menuPrice": 100
+        "name": "Hamburger",
+        "price": 100
       },
       {
         "menuID": "M004",
@@ -32,12 +32,12 @@
   },
   {
     "orderID": "O003",
-    "tableId": "T003",
+    "tableID": "T003",
     "menuOrder": [
       {
         "menuID": "M000",
-        "menuName": "Hamburger",
-        "menuPrice": 100
+        "name": "Hamburger",
+        "price": 100
       }
     ],
     "orderPrice": 100,
@@ -45,12 +45,12 @@
   },
   {
     "orderID": "O003",
-    "tableId": "T004",
+    "tableID": "T004",
     "menuOrder": [
       {
         "menuID": "M000",
-        "menuName": "Hamburger",
-        "menuPrice": 100
+        "name": "Hamburger",
+        "price": 100
       }
     ],
     "orderPrice": 100,
@@ -58,12 +58,12 @@
   },
   {
     "orderID": "O003",
-    "tableId": "T001",
+    "tableID": "T001",
     "menuOrder": [
       {
         "menuID": "M000",
-        "menuName": "Hamburger",
-        "menuPrice": 100
+        "name": "Hamburger",
+        "price": 100
       }
     ],
     "orderPrice": 100,
