@@ -16,8 +16,6 @@ import 'package:restaurant_table_management/domains/menu.dart';
 import 'package:restaurant_table_management/pages/confirm_order_page.dart';
 import 'package:restaurant_table_management/services/services.dart';
 
-import '../components/buttons/expand_button.dart';
-
 /// // On Add Item (Display Edit Quantity Mode in Menuitem))
 // // On Edit Item (Display Edit Quantity Mode in Menuitem))
 //  // On Confrim Item (Add or Remove Item with given amount to Local List )
@@ -37,27 +35,37 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   Map<String, int> selectedMenusQuantity = {};
 
   _routeToConfrimOrderPage() {
-    List<Menu> selectedMenus = [];
     Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ConfirmOrderPage(menus: selectedMenus)))
-        .then((selectedMenus) {
+                builder: (context) => ConfirmOrderPage(
+                    selectedMenusQuantity: selectedMenusQuantity)))
+        .then((newSelectedMenusQuantity) {
       setState(() {
-        selectedMenus = selectedMenus;
+        selectedMenusQuantity = newSelectedMenusQuantity;
       });
     });
   }
 
+  int countSelectedMenus() {
+    int sum = 0;
+    for (var key in selectedMenusQuantity.keys) {
+      sum += selectedMenusQuantity[key] ?? 0;
+    }
+    return sum;
+  }
+
   void _updateSelectedMenusQuantity(newValue) {
-    selectedMenusQuantity = newValue;
+    setState(() {
+      selectedMenusQuantity = newValue;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return PrimaryScaffold(
         bottomNavigationBar: WideButton(
-          title: 'Total Item: 5',
+          title: 'Total Item: ${countSelectedMenus()}',
           onPressed: () {
             _routeToConfrimOrderPage();
           },
@@ -80,10 +88,12 @@ class MenuList extends StatefulWidget {
   const MenuList(
       {Key? key,
       required this.selectedMenusQuantity,
-      required this.onUpdateSelectedMenusQuantity})
+      required this.onUpdateSelectedMenusQuantity,
+      this.showSelectedOnly = false})
       : super(key: key);
   final Map<String, int> selectedMenusQuantity;
   final Function(Map<String, int>) onUpdateSelectedMenusQuantity;
+  final bool showSelectedOnly;
   @override
   State<MenuList> createState() => _MenuListState();
 }
@@ -92,11 +102,12 @@ class _MenuListState extends State<MenuList> {
   late Future<List<Menu>> _getMenus;
   late Map<String, int> selectedMenusQuantity;
   late Function(Map<String, int>) onUpdateSelectedMenusQuantity;
-
+  late bool showSelectedOnly;
   @override
   void initState() {
     super.initState();
     _getMenus = getMenus();
+    showSelectedOnly = widget.showSelectedOnly;
     selectedMenusQuantity = widget.selectedMenusQuantity;
     onUpdateSelectedMenusQuantity = widget.onUpdateSelectedMenusQuantity;
   }
@@ -115,19 +126,41 @@ class _MenuListState extends State<MenuList> {
                 itemCount: menuList.length,
                 itemBuilder: (context, index) {
                   var menu = menuList[index];
-                  return SecondaryListItem(
-                    title: menu.name,
-                    buttons: [
-                      MenuButton(
-                        onQuantityChanged: (int quantity) {
-                          setState(() {
-                            selectedMenusQuantity[menu.id] = quantity;
-                          });
-                          onUpdateSelectedMenusQuantity(selectedMenusQuantity);
-                        },
-                      )
-                    ],
-                  );
+                  if (showSelectedOnly) {
+                    if (selectedMenusQuantity[menu.id] != null) {
+                      return SecondaryListItem(
+                        title: menu.name,
+                        buttons: [
+                          MenuButton(
+                            quantity: selectedMenusQuantity[menu.id] ?? 0,
+                            onQuantityChanged: (int quantity) {
+                              setState(() {
+                                selectedMenusQuantity[menu.id] = quantity;
+                              });
+                              onUpdateSelectedMenusQuantity(
+                                  selectedMenusQuantity);
+                            },
+                          )
+                        ],
+                      );
+                    } else
+                      return Container();
+                  } else {
+                    return SecondaryListItem(
+                      title: menu.name,
+                      buttons: [
+                        MenuButton(
+                          onQuantityChanged: (int quantity) {
+                            setState(() {
+                              selectedMenusQuantity[menu.id] = quantity;
+                            });
+                            onUpdateSelectedMenusQuantity(
+                                selectedMenusQuantity);
+                          },
+                        )
+                      ],
+                    );
+                  }
                 },
               )
             ]);

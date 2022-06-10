@@ -39,15 +39,17 @@ class PrimaryButton extends StatelessWidget {
 }
 
 class MenuButton extends StatefulWidget {
-  const MenuButton({Key? key, this.onQuantityChanged}) : super(key: key);
+  const MenuButton({Key? key, this.onQuantityChanged, this.quantity = 0})
+      : super(key: key);
   final Function(int)? onQuantityChanged;
+  final int quantity;
 
   @override
   State<MenuButton> createState() => _MenuButtonState();
 }
 
 class _MenuButtonState extends State<MenuButton> {
-  int quantity = 0;
+  late int quantity = widget.quantity;
   bool isEditing = false;
   late final Function(int)? onQuantityChanged = widget.onQuantityChanged;
 
