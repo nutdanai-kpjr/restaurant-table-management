@@ -18,7 +18,7 @@ const String mockUpUrl = 'assets/json/';
 Future<List<Table>> getTableList() async {
   final response = await get(Uri.parse('$serviceBaseUrl/listTable'));
   // final response = await rootBundle.loadString('assets/json/get_tables.json');
-
+  print('fire');
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     var parsedJson = jsonDecode(response.body);

@@ -67,7 +67,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     return PrimaryScaffold(
         bottomNavigationBar: WideButton(
           title: countSelectedMenus() > 0
-              ? 'Total Item: ${countSelectedMenus()}'
+              ? 'Confirm ${countSelectedMenus()} Item'
               : 'Empty',
           onPressed: countSelectedMenus() > 0
               ? () {

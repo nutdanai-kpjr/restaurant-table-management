@@ -13,7 +13,10 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PrimaryScaffold(
         body: Column(
-      children: [PrimaryHeader(), PrimaryTab()],
+      children: const [
+        Expanded(flex: 1, child: PrimaryHeader()),
+        Expanded(flex: 8, child: PrimaryTab())
+      ],
     ));
   }
 }

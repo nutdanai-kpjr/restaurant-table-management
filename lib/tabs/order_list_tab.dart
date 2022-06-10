@@ -35,16 +35,6 @@ class _OrderListState extends State<OrderList> {
     _getOrderList = getOrders();
   }
 
-  _onCompleted() {
-    //ADD Api  Here
-    _refetch();
-  }
-
-  _onCancelled() {
-    //ADD Api Here
-    _refetch();
-  }
-
   _refetch() {
     setState(() {
       _getOrderList = getOrders();
@@ -73,13 +63,15 @@ class _OrderListState extends State<OrderList> {
                 ? [
                     PrimaryButton(
                         text: 'Complete',
-                        onPressed: () {
-                          completeOrder(order.id);
+                        onPressed: () async {
+                          await completeOrder(order.id);
+                          _refetch();
                         }),
                     PrimaryButton(
                         text: "Cancel",
-                        onPressed: () {
-                          cancelOrder(order.id);
+                        onPressed: () async {
+                          await cancelOrder(order.id);
+                          _refetch();
                         }),
                   ]
                 : [];

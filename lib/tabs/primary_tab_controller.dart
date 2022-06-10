@@ -13,11 +13,18 @@ class PrimaryTab extends StatelessWidget {
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.8,
           child: Column(children: [
-            TabBar(labelColor: kPrimaryFontColor, tabs: [
-              Tab(text: 'Table'),
-              Tab(text: 'Order'),
-            ]),
-            Expanded(
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.0),
+                border: const Border(
+                    bottom: BorderSide(color: kBorderColor, width: 1.0)),
+              ),
+              child: const TabBar(labelColor: kPrimaryFontColor, tabs: [
+                Tab(text: 'Table'),
+                Tab(text: 'Order'),
+              ]),
+            ),
+            const Expanded(
                 child: TabBarView(
                     children: <Widget>[TableListTab(), OrderListTab()]))
           ]),
