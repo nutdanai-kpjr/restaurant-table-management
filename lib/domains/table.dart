@@ -20,9 +20,9 @@ class Table {
   factory Table.fromJson(Map<String, dynamic> parsedJson) {
     return Table(
         id: parsedJson['tableID'],
-        status: parsedJson['status'],
+        status: parsedJson['tableStatus'],
         totalPrice: parsedJson['totalPrice'],
-        orderList: parsedJson['orderList']
+        orderList: parsedJson['listOrder']
             .map<Order>((e) => Order.fromJson(e))
             .toList());
   }

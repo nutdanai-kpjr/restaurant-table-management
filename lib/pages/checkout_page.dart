@@ -5,13 +5,19 @@
 // Wide Button: Checkout
 
 import 'package:flutter/material.dart';
+import 'package:restaurant_table_management/components/secondary_list_item.dart';
 import 'package:restaurant_table_management/pages/main_page.dart';
 
+import '../components/buttons/expand_button.dart';
 import '../components/buttons/wide_button.dart';
 import '../components/headers/Secondary_header.dart';
 import '../components/primary_scaffold.dart';
+import '../constants.dart';
+import '../domains/order.dart';
+import '../domains/orderSummary.dart';
+import '../services/services.dart';
 
-/// Use getCheckOutItems from TabeleProvider
+/// Use getCheckoutLists from TabeleProvider
 
 // On Checkout Button
 // Post Checkout API and push to Table Page
@@ -36,8 +42,89 @@ class CheckOutPage extends StatelessWidget {
             tableId: tableID,
             time: '3 Jun | 14.00',
           ),
-          Text('Checkout Summary'),
-          Text('CheckoutItem List ')
+          CheckoutList(tableID: tableID),
         ]));
+  }
+}
+
+class CheckoutList extends StatefulWidget {
+  const CheckoutList({Key? key, required this.tableID}) : super(key: key);
+  final String tableID;
+  @override
+  State<CheckoutList> createState() => _CheckoutListState();
+}
+
+class _CheckoutListState extends State<CheckoutList> {
+  late Future<OrderSummary> _getCheckoutList;
+  late final tableID = widget.tableID;
+  @override
+  void initState() {
+    super.initState();
+    _getCheckoutList = getCheckoutOrders(tableID);
+  }
+
+  _onCompleted() {
+    //ADD Api  Here
+    _refetch();
+  }
+
+  _onCancelled() {
+    //ADD Api Here
+    _refetch();
+  }
+
+  _refetch() {
+    setState(() {
+      _getCheckoutList = getCheckoutOrders(tableID);
+    });
+  }
+
+  _buildOrderList(
+      {required List<Order> list,
+      required String title,
+      List<Widget> buttons = const [ExpandButton()]}) {
+    return Container(
+      margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
+      decoration: BoxDecoration(
+        border: Border.all(color: kBorderColor),
+      ),
+      child: Column(children: [
+        Text(title),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: list.length,
+          itemBuilder: (context, index) {
+            var order = list[index];
+            return SecondaryListItem(
+              title: order.id,
+              buttons: buttons,
+            );
+          },
+        )
+      ]),
+    );
+  }
+
+  _buildCheckoutList() {
+    return FutureBuilder(
+        future: _getCheckoutList,
+        builder: (context, AsyncSnapshot<OrderSummary> snapshot) {
+          if (snapshot.hasData) {
+            List<Order> checkoutOrderList = snapshot.data?.orderList ?? [];
+            return SingleChildScrollView(
+              child: Column(children: [
+                _buildOrderList(
+                    list: checkoutOrderList, title: 'Checkout Summary'),
+              ]),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildCheckoutList();
   }
 }
