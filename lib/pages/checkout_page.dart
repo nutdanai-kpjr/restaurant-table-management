@@ -5,12 +5,12 @@
 // Wide Button: Checkout
 
 import 'package:flutter/material.dart';
-import 'package:restaurant_table_management/components/secondary_list_item.dart';
 import 'package:restaurant_table_management/pages/main_page.dart';
 
-import '../components/buttons/expand_button.dart';
 import '../components/buttons/wide_button.dart';
 import '../components/headers/Secondary_header.dart';
+import '../components/order_detail.dart';
+import '../components/primary_list_item.dart';
 import '../components/primary_scaffold.dart';
 import '../constants.dart';
 import '../domains/order.dart';
@@ -30,8 +30,8 @@ class CheckOutPage extends StatelessWidget {
     return PrimaryScaffold(
         bottomNavigationBar: WideButton(
           title: 'Confirm',
-          onPressed: () {
-            // Add API request here
+          onPressed: () async {
+            await confirmCheckout(tableID);
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => MainPage()));
           },
@@ -79,10 +79,10 @@ class _CheckoutListState extends State<CheckoutList> {
     });
   }
 
-  _buildOrderList(
-      {required List<Order> list,
-      required String title,
-      List<Widget> buttons = const [ExpandButton()]}) {
+  _buildOrderList({
+    required List<Order> list,
+    required String title,
+  }) {
     return Container(
       margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
       decoration: BoxDecoration(
@@ -95,10 +95,15 @@ class _CheckoutListState extends State<CheckoutList> {
           itemCount: list.length,
           itemBuilder: (context, index) {
             var order = list[index];
-            return SecondaryListItem(
-              title: order.id,
-              buttons: buttons,
-            );
+            return PrimaryListItem(
+                isExapandable: true,
+                title: order.id,
+                subTitle: '',
+                rightSizeChildren: [Text('฿${order.price.toString()}')],
+                indicatorColor: kCompletedColor,
+                expandedChild: OrderDetails(
+                  order: order,
+                ));
           },
         )
       ]),
@@ -111,10 +116,14 @@ class _CheckoutListState extends State<CheckoutList> {
         builder: (context, AsyncSnapshot<OrderSummary> snapshot) {
           if (snapshot.hasData) {
             List<Order> checkoutOrderList = snapshot.data?.orderList ?? [];
+            double totalPrice = snapshot.data?.totalPrice ?? 0;
             return SingleChildScrollView(
               child: Column(children: [
                 _buildOrderList(
-                    list: checkoutOrderList, title: 'Checkout Summary'),
+                  list: checkoutOrderList,
+                  title: 'Checkout Summary',
+                ),
+                Text(totalPrice.toString()),
               ]),
             );
           } else {

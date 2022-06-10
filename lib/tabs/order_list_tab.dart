@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_table_management/components/buttons/expand_button.dart';
 import 'package:restaurant_table_management/components/buttons/primary_button.dart';
+import 'package:restaurant_table_management/components/order_detail.dart';
 import 'package:restaurant_table_management/components/primary_list_item.dart';
 import 'package:restaurant_table_management/constants.dart';
 import 'package:restaurant_table_management/domains/order.dart';
@@ -55,9 +55,9 @@ class _OrderListState extends State<OrderList> {
       {required List<Order> list,
       required String title,
       required Color color,
-      List<Widget> buttons = const [ExpandButton()]}) {
+      isUpdatable = false}) {
     return Container(
-      margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
+      margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.025),
       decoration: BoxDecoration(
         border: Border.all(color: kBorderColor),
       ),
@@ -68,11 +68,30 @@ class _OrderListState extends State<OrderList> {
           itemCount: list.length,
           itemBuilder: (context, index) {
             var order = list[index];
+
+            List<Widget> buttons = isUpdatable
+                ? [
+                    PrimaryButton(
+                        text: 'Complete',
+                        onPressed: () {
+                          completeOrder(order.id);
+                        }),
+                    PrimaryButton(
+                        text: "Cancel",
+                        onPressed: () {
+                          cancelOrder(order.id);
+                        }),
+                  ]
+                : [];
             return PrimaryListItem(
+                isExapandable: true,
                 title: order.id,
                 subTitle: order.tableId ?? '',
-                buttons: buttons,
-                indicatorColor: color);
+                rightSizeChildren: buttons,
+                indicatorColor: color,
+                expandedChild: OrderDetails(
+                  order: order,
+                ));
           },
         )
       ]),
@@ -85,33 +104,24 @@ class _OrderListState extends State<OrderList> {
         builder: (context, AsyncSnapshot<Map<String, List<Order>>> snapshot) {
           if (snapshot.hasData) {
             Map<String, List<Order>> orderList = snapshot.data ??
-                {
-                  'pending': [],
-                  'completed': [],
-                  'cancelled': [],
-                  'history': []
-                };
+                {'pending': [], 'completed': [], 'canceled': [], 'history': []};
             return SingleChildScrollView(
               child: Column(children: [
                 _buildSubList(
                     list: orderList['pending'] ?? [],
                     title: 'Pending',
                     color: kInprogressColor,
-                    buttons: [
-                      PrimaryButton(text: 'Complete', onPressed: () {}),
-                      PrimaryButton(text: "Cancel", onPressed: () {}),
-                      ExpandButton()
-                    ]),
+                    isUpdatable: true),
                 _buildSubList(
                     list: orderList['completed'] ?? [],
                     title: 'Completed',
                     color: kCompletedColor),
                 _buildSubList(
-                    list: orderList['cancelled'] ?? [],
-                    title: 'Cancelled',
+                    list: orderList['canceled'] ?? [],
+                    title: 'Canceled',
                     color: kCancelledColor),
                 _buildSubList(
-                    list: orderList['history'] ?? [],
+                    list: orderList['hidden'] ?? [],
                     title: 'History',
                     color: kPrimaryFontColor),
               ]),

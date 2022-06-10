@@ -29,10 +29,10 @@ class SecondaryListItem extends StatelessWidget {
   const SecondaryListItem({
     Key? key,
     required this.title,
-    required this.buttons,
+    required this.rightSideChildren,
   }) : super(key: key);
   final String title;
-  final List<Widget> buttons;
+  final List<Widget> rightSideChildren;
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +45,17 @@ class SecondaryListItem extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              flex: 2,
+              flex: 1,
               child: Text(title),
             ),
             Expanded(
                 flex: 3,
-                child: Row(
-                  children: buttons,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: rightSideChildren,
+                  ),
                 )),
           ],
         ));

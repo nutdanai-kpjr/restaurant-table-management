@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_table_management/components/buttons/primary_button.dart';
 import 'package:restaurant_table_management/constants.dart';
+import 'package:restaurant_table_management/services/services.dart';
 
 import '../pages/checkout_page.dart';
 import '../pages/create_order_page.dart';
@@ -58,6 +59,8 @@ class AvaliableTableItem extends StatelessWidget {
   final String tableID;
   final Function()? refresh;
   _onCheckIn() {
+    checkInTable(tableID);
+
     ///ADD API POST REQUEST FOR UPDATE TABLE HERE
     refresh?.call();
   }

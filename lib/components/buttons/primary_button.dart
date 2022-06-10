@@ -39,8 +39,11 @@ class PrimaryButton extends StatelessWidget {
 }
 
 class MenuButton extends StatefulWidget {
-  const MenuButton({Key? key, this.onQuantityChanged, this.quantity = 0})
-      : super(key: key);
+  const MenuButton({
+    Key? key,
+    this.onQuantityChanged,
+    this.quantity = 0,
+  }) : super(key: key);
   final Function(int)? onQuantityChanged;
   final int quantity;
 

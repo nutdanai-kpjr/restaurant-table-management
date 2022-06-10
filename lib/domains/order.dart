@@ -1,7 +1,7 @@
 // Order Class with following attributes:
 // - id
 // - name
-// - status (Enum: pending,completed,cancelled,hidden)
+// - status (Enum: pending,completed,canceled,hidden)
 // - tableId(null if it's history)
 // - List<Menu>
 // - price (double)
@@ -36,6 +36,6 @@ class Order {
 enum OrderStatus {
   pending,
   completed,
-  cancelled,
+  canceled,
   hidden,
 }

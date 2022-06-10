@@ -36,11 +36,12 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
 
   _routeToConfrimOrderPage() {
     Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ConfirmOrderPage(
-                    selectedMenusQuantity: selectedMenusQuantity)))
-        .then((newSelectedMenusQuantity) {
+        context,
+        MaterialPageRoute(
+            builder: (context) => ConfirmOrderPage(
+                  selectedMenusQuantity: selectedMenusQuantity,
+                  tableID: widget.tableID,
+                ))).then((newSelectedMenusQuantity) {
       setState(() {
         selectedMenusQuantity = newSelectedMenusQuantity;
       });
@@ -65,10 +66,14 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   Widget build(BuildContext context) {
     return PrimaryScaffold(
         bottomNavigationBar: WideButton(
-          title: 'Total Item: ${countSelectedMenus()}',
-          onPressed: () {
-            _routeToConfrimOrderPage();
-          },
+          title: countSelectedMenus() > 0
+              ? 'Total Item: ${countSelectedMenus()}'
+              : 'Empty',
+          onPressed: countSelectedMenus() > 0
+              ? () {
+                  _routeToConfrimOrderPage();
+                }
+              : () {},
         ),
         body: Column(children: [
           SecondaryHeader(
@@ -130,7 +135,7 @@ class _MenuListState extends State<MenuList> {
                     if (selectedMenusQuantity[menu.id] != null) {
                       return SecondaryListItem(
                         title: menu.name,
-                        buttons: [
+                        rightSideChildren: [
                           MenuButton(
                             quantity: selectedMenusQuantity[menu.id] ?? 0,
                             onQuantityChanged: (int quantity) {
@@ -148,7 +153,7 @@ class _MenuListState extends State<MenuList> {
                   } else {
                     return SecondaryListItem(
                       title: menu.name,
-                      buttons: [
+                      rightSideChildren: [
                         MenuButton(
                           onQuantityChanged: (int quantity) {
                             setState(() {

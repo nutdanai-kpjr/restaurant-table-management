@@ -25,46 +25,93 @@ import 'package:restaurant_table_management/constants.dart';
 ///     Completed (Table Number)
 ///     Cancelled (Table Number)
 ///     History (Order Number))
-class PrimaryListItem extends StatelessWidget {
-  const PrimaryListItem({
-    Key? key,
-    required this.title,
-    required this.subTitle,
-    required this.buttons,
-    required this.indicatorColor,
-  }) : super(key: key);
+class PrimaryListItem extends StatefulWidget {
+  const PrimaryListItem(
+      {Key? key,
+      required this.title,
+      required this.subTitle,
+      required this.rightSizeChildren,
+      required this.indicatorColor,
+      this.isExapandable = false,
+      this.expandedChild})
+      : super(key: key);
   final String subTitle;
   final String title;
-  final List<Widget> buttons;
+  final List<Widget> rightSizeChildren;
   final Color indicatorColor;
+  final bool isExapandable;
+  final Widget? expandedChild;
+
+  @override
+  State<PrimaryListItem> createState() => _PrimaryListItemState();
+}
+
+class _PrimaryListItemState extends State<PrimaryListItem> {
+  bool _isExpanded = false;
+  Widget _buildExpandButton() {
+    return Row(children: [
+      IconButton(
+          onPressed: () {
+            setState(() {
+              _isExpanded = !_isExpanded;
+            });
+          },
+          icon: Icon(!_isExpanded ? Icons.expand_more : Icons.expand_less)),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
-        height: MediaQuery.of(context).size.height * 0.075,
-        decoration: BoxDecoration(
-          border: Border.all(color: kBorderColor),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-                flex: 1,
-                child: Container(
-                  color: indicatorColor,
-                )),
-            Expanded(
-              flex: 15,
-              child: Column(
-                children: [Text(title), Text(subTitle)],
+    var newButtons = !widget.isExapandable
+        ? widget.rightSizeChildren
+        : [...widget.rightSizeChildren, _buildExpandButton()];
+    return LimitedBox(
+      maxHeight: 300,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+              margin:
+                  EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
+              height: MediaQuery.of(context).size.height * 0.07,
+              decoration: BoxDecoration(
+                border: Border.all(color: kBorderColor),
               ),
-            ),
-            Expanded(
-                flex: 30,
-                child: Row(
-                  children: buttons,
-                )),
-          ],
-        ));
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                            flex: 1,
+                            child: Container(
+                              color: widget.indicatorColor,
+                            )),
+                        Expanded(
+                          flex: 6,
+                          child: Column(
+                            children: [
+                              Text(widget.title),
+                              Text(widget.subTitle)
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 15,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: newButtons),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )),
+          widget.isExapandable && _isExpanded
+              ? widget.expandedChild ?? Container()
+              : Container(),
+        ],
+      ),
+    );
   }
 }

@@ -10,15 +10,17 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_table_management/components/primary_scaffold.dart';
 import 'package:restaurant_table_management/pages/create_order_page.dart';
 import 'package:restaurant_table_management/pages/main_page.dart';
+import 'package:restaurant_table_management/services/services.dart';
 
 import '../components/buttons/wide_button.dart';
 import '../components/headers/secondary_header.dart';
 import '../domains/menu.dart';
 
 class ConfirmOrderPage extends StatefulWidget {
-  const ConfirmOrderPage({Key? key, required this.selectedMenusQuantity})
+  const ConfirmOrderPage(
+      {Key? key, required this.selectedMenusQuantity, required this.tableID})
       : super(key: key);
-
+  final String tableID;
   final Map<String, int> selectedMenusQuantity;
   @override
   State<ConfirmOrderPage> createState() => _ConfirmOrderPageState();
@@ -27,9 +29,11 @@ class ConfirmOrderPage extends StatefulWidget {
 class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
   late List<Menu> menus;
   late Map<String, int> selectedMenusQuantity;
+  late String tableID;
   @override
   void initState() {
     selectedMenusQuantity = widget.selectedMenusQuantity;
+    tableID = widget.tableID;
     super.initState();
   }
 
@@ -44,13 +48,20 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
   Widget build(BuildContext context) {
     return PrimaryScaffold(
         bottomNavigationBar: WideButton(
-          title: 'Confirm',
-          onPressed: () {
-            // Add API request here
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => MainPage()));
-          },
-        ),
+            title: 'Confirm',
+            onPressed: () async {
+              List<String> menuIdList = [];
+
+              selectedMenusQuantity.forEach((key, value) {
+                for (int i = 0; i < value; i++) {
+                  menuIdList.add(key);
+                }
+              });
+              await createOrder(tableID, menuIdList);
+              // Add API request here
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const MainPage()));
+            }),
         body: Column(children: [
           SecondaryHeader(
             title: "New Order",
