@@ -10,6 +10,7 @@ import 'package:restaurant_table_management/pages/main_page.dart';
 import '../components/buttons/wide_button.dart';
 import '../components/headers/Secondary_header.dart';
 import '../components/order_detail.dart';
+import '../components/primary_circular_progress_indicator.dart';
 import '../components/primary_list_item.dart';
 import '../components/primary_scaffold.dart';
 import '../constants.dart';
@@ -31,7 +32,7 @@ class CheckOutPage extends StatelessWidget {
         bottomNavigationBar: WideButton(
           title: 'Confirm',
           onPressed: () async {
-            await confirmCheckout(tableID);
+            await confirmCheckout(tableID, context: context);
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => MainPage()));
           },
@@ -60,7 +61,7 @@ class _CheckoutListState extends State<CheckoutList> {
   @override
   void initState() {
     super.initState();
-    _getCheckoutList = getCheckoutOrders(tableID);
+    _getCheckoutList = getCheckoutOrders(tableID, context: context);
   }
 
   _onCompleted() {
@@ -75,7 +76,7 @@ class _CheckoutListState extends State<CheckoutList> {
 
   _refetch() {
     setState(() {
-      _getCheckoutList = getCheckoutOrders(tableID);
+      _getCheckoutList = getCheckoutOrders(tableID, context: context);
     });
   }
 
@@ -167,7 +168,7 @@ class _CheckoutListState extends State<CheckoutList> {
               ]),
             );
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: PrimaryCircularProgressIndicator());
           }
         });
   }

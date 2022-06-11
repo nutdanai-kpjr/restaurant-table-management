@@ -94,8 +94,8 @@ class AvaliableTableItem extends StatelessWidget {
   }) : super(key: key);
   final String tableID;
   final Function()? refresh;
-  _onCheckIn() {
-    checkInTable(tableID);
+  _onCheckIn(context) {
+    checkInTable(tableID, context: context);
 
     ///ADD API POST REQUEST FOR UPDATE TABLE HERE
     refresh?.call();
@@ -109,7 +109,9 @@ class AvaliableTableItem extends StatelessWidget {
         buttons: [
           PrimaryButton(
             text: 'Check In',
-            onPressed: _onCheckIn,
+            onPressed: () async {
+              await _onCheckIn(context);
+            },
           )
         ],
         indicatorColor: kCompletedColor);

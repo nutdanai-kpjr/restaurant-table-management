@@ -6,6 +6,8 @@ import 'package:restaurant_table_management/constants.dart';
 import 'package:restaurant_table_management/domains/order.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
+import '../components/primary_circular_progress_indicator.dart';
+
 class OrderListTab extends StatelessWidget {
   const OrderListTab({Key? key}) : super(key: key);
 
@@ -32,12 +34,12 @@ class _OrderListState extends State<OrderList> {
   @override
   void initState() {
     super.initState();
-    _getOrderList = getOrders();
+    _getOrderList = getOrders(context: context);
   }
 
   _refetch() {
     setState(() {
-      _getOrderList = getOrders();
+      _getOrderList = getOrders(context: context);
     });
   }
 
@@ -68,7 +70,7 @@ class _OrderListState extends State<OrderList> {
                         color: kCompletedColor.withOpacity(0.5),
                         text: 'Complete',
                         onPressed: () async {
-                          await completeOrder(order.id);
+                          await completeOrder(order.id, context: context);
                           _refetch();
                         }),
                     SizedBox(
@@ -78,14 +80,19 @@ class _OrderListState extends State<OrderList> {
                         color: kCancelledColor.withOpacity(0.5),
                         text: "Cancel",
                         onPressed: () async {
-                          await cancelOrder(order.id);
+                          await cancelOrder(order.id, context: context);
                           _refetch();
                         }),
                   ]
-                : [];
+                : [
+                    Text(
+                      '฿ ${order.price.toStringAsFixed(1)}',
+                      style: kHeaderTextStyle,
+                    ),
+                  ];
             return PrimaryListItem(
                 isExapandable: true,
-                title: '${order.id}',
+                title: order.id,
                 subTitle: 'Table: ${order.tableId ?? ' '}',
                 rightSizeChildren: buttons,
                 indicatorColor: color,
@@ -131,7 +138,7 @@ class _OrderListState extends State<OrderList> {
               ]),
             );
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: PrimaryCircularProgressIndicator());
           }
         });
   }

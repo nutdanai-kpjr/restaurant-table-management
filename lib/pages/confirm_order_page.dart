@@ -57,7 +57,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
                   menuIdList.add(key);
                 }
               });
-              await createOrder(tableID, menuIdList);
+              await createOrder(tableID, menuIdList, context: context);
               // Add API request here
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const MainPage()));
@@ -65,8 +65,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
         body: Column(children: [
           SecondaryHeader(
             title: "Confirm Order",
-            tableId: 'T001',
-            time: '3 Jun | 14.00',
+            tableId: 'Table: $tableID',
+            time: DateTime.now().toString().substring(0, 16),
             onPressedBackButton: () {
               Navigator.pop(context, selectedMenusQuantity);
             },

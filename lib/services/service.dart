@@ -1,12 +1,14 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:restaurant_table_management/components/buttons/primary_button.dart';
 import 'package:restaurant_table_management/domains/order.dart';
 import 'package:restaurant_table_management/domains/orderSummary.dart';
 
 import '../domains/menu.dart';
-import '../domains/table.dart';
+import '../domains/table.dart' as domain;
 
 // const String baseUrl = 'http://192.168.86.76:50001/';
 const String baseUrl = 'http://10.0.2.2:50001/training-ws/'; // for emulator
@@ -16,25 +18,26 @@ const String restaurantBaseUrl = '$baseUrl/api/v1/restaurant';
 const String internalBaseUrl = '$baseUrl/api/v1/internal';
 
 const String mockUpUrl = 'assets/json/';
-Future<List<Table>> getTableList() async {
+Future<List<domain.Table>> getTableList({required context}) async {
   final response = await get(Uri.parse('$restaurantBaseUrl/listTable'));
   // final response = await rootBundle.loadString('assets/json/get_tables.json');
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     var parsedJson = jsonDecode(response.body);
-    List<Table> results =
-        parsedJson.map<Table>((table) => Table.fromJson(table)).toList();
+    List<domain.Table> results = parsedJson
+        .map<domain.Table>((table) => domain.Table.fromJson(table))
+        .toList();
 
     return results;
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load post');
+    var body = jsonDecode(response.body);
+    await showErrorDialog(context, body);
+    throw Exception('Failed to get table post');
   }
 }
 
-Future<List<Menu>> getMenus() async {
+Future<List<Menu>> getMenus({required context}) async {
   final response = await get(Uri.parse('$restaurantBaseUrl/listMenu'));
   // final response = await rootBundle.loadString('assets/json/get_menu.json');
   if (response.statusCode == 200) {
@@ -45,13 +48,15 @@ Future<List<Menu>> getMenus() async {
 
     return results;
   } else {
+    var body = jsonDecode(response.body);
+    await showErrorDialog(context, body);
     // If the server did not return a 200 OK response,
     // then throw an exception.
     throw Exception('Failed to load post');
   }
 }
 
-Future<List<Order>> getOrderHistory() async {
+Future<List<Order>> getOrderHistory({required context}) async {
   final response = await get(Uri.parse('$internalBaseUrl/getHistoryOrder'));
 
 // final response = await rootBundle.loadString('assets/json/get_menu.json');
@@ -62,6 +67,8 @@ Future<List<Order>> getOrderHistory() async {
         parsedJson.map<Order>((order) => Order.fromJson(order)).toList();
     return results;
   } else {
+    var body = jsonDecode(response.body);
+    await showErrorDialog(context, body);
     return [];
     // If the server did not return a 200 OK response,
     // then throw an exception.
@@ -69,7 +76,7 @@ Future<List<Order>> getOrderHistory() async {
   }
 }
 
-Future<Map<String, List<Order>>> getOrders() async {
+Future<Map<String, List<Order>>> getOrders({required context}) async {
   final response = await get(Uri.parse('$restaurantBaseUrl/listOrder'));
   // final response = await rootBundle.loadString('assets/json/get_menu.json');
   if (response.statusCode == 200) {
@@ -90,17 +97,18 @@ Future<Map<String, List<Order>>> getOrders() async {
         results.where((element) => element.status == 'COMPLETED').toList();
     orderMap['canceled'] =
         results.where((element) => element.status == 'CANCELED').toList();
-    orderMap['hidden'] = await getOrderHistory();
-    print(orderMap);
+    orderMap['hidden'] = await getOrderHistory(context: context);
+
     return orderMap;
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load post');
+    var body = jsonDecode(response.body);
+    await showErrorDialog(context, body);
+    return {};
   }
 }
 
-Future<OrderSummary> getCheckoutOrders(String tableID) async {
+Future<OrderSummary> getCheckoutOrders(String tableID,
+    {required context}) async {
   final response = await post(Uri.parse(
     '$restaurantBaseUrl/checkOut?tableID=$tableID',
   ));
@@ -112,14 +120,15 @@ Future<OrderSummary> getCheckoutOrders(String tableID) async {
     OrderSummary result = OrderSummary.fromJson(parsedJson);
     return result;
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load post');
+    var body = jsonDecode(response.body);
+    await showErrorDialog(context, body);
+    Navigator.maybePop(context);
+    return OrderSummary(orderList: [], totalPrice: 0.0);
     // }
   }
 }
 
-Future<bool> confirmCheckout(String tableID) async {
+Future<bool> confirmCheckout(String tableID, {required context}) async {
   final response = await post(Uri.parse(
     '$restaurantBaseUrl/exit?tableID=$tableID',
   ));
@@ -127,6 +136,9 @@ Future<bool> confirmCheckout(String tableID) async {
   if (response.statusCode == 200) {
     return true;
   } else {
+    var body = jsonDecode(response.body);
+    await showErrorDialog(context, body);
+    return false;
     // If the server did not return a 200 OK response,
     // then throw an exception.
     throw Exception('Failed to check out');
@@ -134,54 +146,55 @@ Future<bool> confirmCheckout(String tableID) async {
   }
 }
 
-Future<bool> checkInTable(String tableID) async {
+Future<bool> checkInTable(String tableID, {required context}) async {
   final response = await post(Uri.parse(
     '$restaurantBaseUrl/checkIn?tableID=$tableID',
   ));
 
-  // final response = await rootBundle.loadString('assets/json/get_orders.json');
-  if (response.statusCode == 200) {
-    return true;
+  if (response.statusCode != 200) {
+    var body = json.decode(response.body);
+    await showErrorDialog(context, body);
+    return false;
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to check in');
-    // }
+    return true;
   }
+  // final response = await rootBundle.loadString('assets/json/get_orders.json');
 }
 
-Future<bool> _updateOrder(String orderID, String status) async {
+Future<bool> _updateOrder(String orderID, String status,
+    {required context}) async {
   final response = await post(Uri.parse(
     '$restaurantBaseUrl/UpdateOrder?orderID=$orderID&orderStatus=$status',
   ));
-  print(response.body);
+
   // final response = await rootBundle.loadString('assets/json/get_orders.json');
   if (response.statusCode == 200) {
     return true;
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to update order');
+    var body = json.decode(response.body);
+    await showErrorDialog(context, body);
+    return false;
     // }
   }
 }
 
-Future<bool> completeOrder(String orderID) async {
-  return await _updateOrder(orderID, 'COMPLETED');
+Future<bool> completeOrder(String orderID, {required context}) async {
+  return await _updateOrder(orderID, 'COMPLETED', context: context);
 }
 
-Future<bool> cancelOrder(String orderID) async {
-  return await _updateOrder(orderID, 'CANCELED');
+Future<bool> cancelOrder(String orderID, {required context}) async {
+  return await _updateOrder(orderID, 'CANCELED', context: context);
 }
 
-Future<bool> createOrder(String tableID, List<String> menuIdList) async {
+Future<bool> createOrder(String tableID, List<String> menuIdList,
+    {required context}) async {
   Map<String, dynamic> mapBody = {
     'tableID': tableID,
     'menuList': menuIdList,
   };
 
   var body = json.encode(mapBody);
-  print(body);
+
   final response = await post(
       Uri.parse(
         '$restaurantBaseUrl/order',
@@ -195,9 +208,29 @@ Future<bool> createOrder(String tableID, List<String> menuIdList) async {
   if (response.statusCode == 200) {
     return true;
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to create order');
+    var body = json.decode(response.body);
+    await showErrorDialog(context, body);
+    return false;
+
     // }
   }
+}
+
+Future<void> showErrorDialog(context, body) async {
+  await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(body["error"] ?? "Unkown error"),
+          content: Text(body["message"] ?? 'Something went wrong'),
+          actions: <Widget>[
+            PrimaryButton(
+              text: "Close",
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      });
 }

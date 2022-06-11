@@ -17,6 +17,8 @@ import 'package:restaurant_table_management/domains/menu.dart';
 import 'package:restaurant_table_management/pages/confirm_order_page.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
+import '../components/primary_circular_progress_indicator.dart';
+
 /// // On Add Item (Display Edit Quantity Mode in Menuitem))
 // // On Edit Item (Display Edit Quantity Mode in Menuitem))
 //  // On Confrim Item (Add or Remove Item with given amount to Local List )
@@ -79,8 +81,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
         body: Column(children: [
           SecondaryHeader(
             title: "New Order",
-            tableId: 'T001',
-            time: '3 Jun | 14.00',
+            tableId: 'Table:${widget.tableID}',
+            time: DateTime.now().toString().substring(0, 16),
           ),
           MenuList(
             selectedMenusQuantity: selectedMenusQuantity,
@@ -112,7 +114,7 @@ class _MenuListState extends State<MenuList> {
   @override
   void initState() {
     super.initState();
-    _getMenus = getMenus();
+    _getMenus = getMenus(context: context);
     showSelectedOnly = widget.showSelectedOnly;
     selectedMenusQuantity = widget.selectedMenusQuantity;
     onUpdateSelectedMenusQuantity = widget.onUpdateSelectedMenusQuantity;
@@ -184,7 +186,7 @@ class _MenuListState extends State<MenuList> {
               ]),
             );
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: PrimaryCircularProgressIndicator());
           }
         });
   }

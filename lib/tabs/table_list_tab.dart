@@ -6,6 +6,8 @@ import 'package:restaurant_table_management/pages/checkout_page.dart';
 import 'package:restaurant_table_management/pages/create_order_page.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
+import '../components/primary_circular_progress_indicator.dart';
+
 class TableListTab extends StatelessWidget {
   const TableListTab({Key? key}) : super(key: key);
 
@@ -32,12 +34,12 @@ class _TableListState extends State<TableList> {
   @override
   void initState() {
     super.initState();
-    _getTableList = getTableList();
+    _getTableList = getTableList(context: context);
   }
 
   _refetch() {
     setState(() {
-      _getTableList = getTableList();
+      _getTableList = getTableList(context: context);
     });
   }
 
@@ -73,7 +75,7 @@ class _TableListState extends State<TableList> {
               },
             );
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: PrimaryCircularProgressIndicator());
           }
         });
   }
