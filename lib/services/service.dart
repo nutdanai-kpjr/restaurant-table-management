@@ -8,17 +8,18 @@ import 'package:restaurant_table_management/domains/orderSummary.dart';
 import '../domains/menu.dart';
 import '../domains/table.dart';
 
-const String serviceBaseUrl =
-    'http://192.168.86.76:50001/restaurant/api/v1/restaurant';
+// const String baseUrl = 'http://192.168.86.76:50001/';
+const String baseUrl = 'http://10.0.2.2:50001/training-ws/'; // for emulator
+// http://localhost:50001/training-ws/
+const String restaurantBaseUrl = '$baseUrl/api/v1/restaurant';
 
-const String internalSerivceBaseUrl =
-    'http://192.168.86.76:50001/restaurant/api/v1/internal';
+const String internalBaseUrl = '$baseUrl/api/v1/internal';
 
 const String mockUpUrl = 'assets/json/';
 Future<List<Table>> getTableList() async {
-  final response = await get(Uri.parse('$serviceBaseUrl/listTable'));
+  final response = await get(Uri.parse('$restaurantBaseUrl/listTable'));
   // final response = await rootBundle.loadString('assets/json/get_tables.json');
-  print('fire');
+
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     var parsedJson = jsonDecode(response.body);
@@ -34,7 +35,7 @@ Future<List<Table>> getTableList() async {
 }
 
 Future<List<Menu>> getMenus() async {
-  final response = await get(Uri.parse('$serviceBaseUrl/listMenu'));
+  final response = await get(Uri.parse('$restaurantBaseUrl/listMenu'));
   // final response = await rootBundle.loadString('assets/json/get_menu.json');
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -51,8 +52,7 @@ Future<List<Menu>> getMenus() async {
 }
 
 Future<List<Order>> getOrderHistory() async {
-  final response =
-      await get(Uri.parse('$internalSerivceBaseUrl/getHistoryOrder'));
+  final response = await get(Uri.parse('$internalBaseUrl/getHistoryOrder'));
 
 // final response = await rootBundle.loadString('assets/json/get_menu.json');
   if (response.statusCode == 200) {
@@ -70,7 +70,7 @@ Future<List<Order>> getOrderHistory() async {
 }
 
 Future<Map<String, List<Order>>> getOrders() async {
-  final response = await get(Uri.parse('$serviceBaseUrl/listOrder'));
+  final response = await get(Uri.parse('$restaurantBaseUrl/listOrder'));
   // final response = await rootBundle.loadString('assets/json/get_menu.json');
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -102,7 +102,7 @@ Future<Map<String, List<Order>>> getOrders() async {
 
 Future<OrderSummary> getCheckoutOrders(String tableID) async {
   final response = await post(Uri.parse(
-    '$serviceBaseUrl/checkOut?tableID=$tableID',
+    '$restaurantBaseUrl/checkOut?tableID=$tableID',
   ));
 
   // final response = await rootBundle.loadString('assets/json/get_orders.json');
@@ -121,7 +121,7 @@ Future<OrderSummary> getCheckoutOrders(String tableID) async {
 
 Future<bool> confirmCheckout(String tableID) async {
   final response = await post(Uri.parse(
-    '$serviceBaseUrl/exit?tableID=$tableID',
+    '$restaurantBaseUrl/exit?tableID=$tableID',
   ));
   // final response = await rootBundle.loadString('assets/json/get_orders.json');
   if (response.statusCode == 200) {
@@ -136,7 +136,7 @@ Future<bool> confirmCheckout(String tableID) async {
 
 Future<bool> checkInTable(String tableID) async {
   final response = await post(Uri.parse(
-    '$serviceBaseUrl/checkIn?tableID=$tableID',
+    '$restaurantBaseUrl/checkIn?tableID=$tableID',
   ));
 
   // final response = await rootBundle.loadString('assets/json/get_orders.json');
@@ -152,7 +152,7 @@ Future<bool> checkInTable(String tableID) async {
 
 Future<bool> _updateOrder(String orderID, String status) async {
   final response = await post(Uri.parse(
-    '$serviceBaseUrl/UpdateOrder?orderID=$orderID&orderStatus=$status',
+    '$restaurantBaseUrl/UpdateOrder?orderID=$orderID&orderStatus=$status',
   ));
   print(response.body);
   // final response = await rootBundle.loadString('assets/json/get_orders.json');
@@ -184,7 +184,7 @@ Future<bool> createOrder(String tableID, List<String> menuIdList) async {
   print(body);
   final response = await post(
       Uri.parse(
-        '$serviceBaseUrl/order',
+        '$restaurantBaseUrl/order',
       ),
       headers: {
         'Content-Type': 'application/json',

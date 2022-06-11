@@ -12,8 +12,8 @@ const Color kBorderColor = Color(0XFFECECEC);
 
 const double kAppTitleFontSize = 28.0;
 const double kHeaderFontSize = 16.0;
-const double kPrimaryFontSize = 12.0;
-const double kSecondaryFontSize = 10.0;
+const double kPrimaryFontSize = 14.0;
+const double kSecondaryFontSize = 12.0;
 
 const TextStyle kAppTitleTextStyle = TextStyle(
   fontSize: kAppTitleFontSize,

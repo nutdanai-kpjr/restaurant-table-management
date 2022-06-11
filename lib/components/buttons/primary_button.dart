@@ -1,6 +1,7 @@
 // OutlinedButton
 import 'package:flutter/material.dart';
 import 'package:restaurant_table_management/components/quantity_selector.dart';
+import 'package:restaurant_table_management/constants.dart';
 
 //// Fix Round/Fontcolor/FontSize
 ///  Customizable BorderColor and Button Size
@@ -28,13 +29,26 @@ import 'package:restaurant_table_management/components/quantity_selector.dart';
 ///
 
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton({Key? key, required this.text, this.onPressed})
+  const PrimaryButton(
+      {Key? key, required this.text, this.onPressed, this.color = kBorderColor})
       : super(key: key);
   final String text;
   final Function()? onPressed;
+  final Color color;
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(onPressed: onPressed, child: Text(text));
+    return OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: color, width: 2.0),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+
+          primary: kPrimaryFontColor,
+          // backgroundColor: w,
+          textStyle: kPrimaryTextStyle.copyWith(fontWeight: FontWeight.normal),
+        ),
+        onPressed: onPressed,
+        child: Text(text));
   }
 }
 

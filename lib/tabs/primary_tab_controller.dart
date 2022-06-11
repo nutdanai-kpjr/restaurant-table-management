@@ -19,10 +19,17 @@ class PrimaryTab extends StatelessWidget {
                 border: const Border(
                     bottom: BorderSide(color: kBorderColor, width: 1.0)),
               ),
-              child: const TabBar(labelColor: kPrimaryFontColor, tabs: [
-                Tab(text: 'Table'),
-                Tab(text: 'Order'),
-              ]),
+              child: const TabBar(
+                  indicatorColor: kThemeColor,
+                  labelColor: kPrimaryFontColor,
+                  labelStyle: kHeaderTextStyle,
+                  unselectedLabelStyle: kHeaderTextStyle,
+                  tabs: [
+                    Tab(
+                      text: 'Table',
+                    ),
+                    Tab(text: 'Order'),
+                  ]),
             ),
             const Expanded(
                 child: TabBarView(

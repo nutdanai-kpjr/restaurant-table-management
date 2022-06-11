@@ -15,7 +15,7 @@ import '../components/primary_scaffold.dart';
 import '../constants.dart';
 import '../domains/order.dart';
 import '../domains/orderSummary.dart';
-import '../services/services.dart';
+import '../services/service.dart';
 
 /// Use getCheckoutLists from TabeleProvider
 

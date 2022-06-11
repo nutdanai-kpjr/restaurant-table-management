@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:restaurant_table_management/constants.dart';
 
 import '../domains/order.dart';
 
@@ -23,9 +24,47 @@ class OrderDetails extends StatelessWidget {
     return menuNameandQuantityandPrice;
   }
 
-  Widget _buildOrderDetail() {
+  Widget _buildOrderDetail(context) {
     var menuNameandQuantityandPrice = getMenuNameandQuantityandPrice();
-    return Column(children: [
+    return Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: kBorderColor, width: 1.0),
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        margin: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.width * 0.01,
+            horizontal: MediaQuery.of(context).size.width * 0.04),
+        padding: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.width * 0.04,
+            horizontal: MediaQuery.of(context).size.width * 0.04),
+        child: Column(children: [
+          ..._buildEachmenu(menuNameandQuantityandPrice),
+          Container(
+            margin:
+                EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01),
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Total',
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                  style: kHeaderTextStyle,
+                ),
+                Text(
+                  '฿${order.price.toStringAsFixed(1)}',
+                  style: kHeaderTextStyle,
+                ),
+              ],
+            ),
+          ),
+        ]));
+  }
+
+  List<Widget> _buildEachmenu(
+      Map<String, dynamic> menuNameandQuantityandPrice) {
+    return [
       for (var menu in menuNameandQuantityandPrice.entries)
         SizedBox(
           width: double.infinity,
@@ -36,16 +75,20 @@ class OrderDetails extends StatelessWidget {
                 '${menu.key} x ${menu.value['quantity']}',
                 textAlign: TextAlign.start,
                 overflow: TextOverflow.ellipsis,
+                style: kPrimaryTextStyle.copyWith(fontSize: kPrimaryFontSize),
               ),
-              Text('Price: ฿${menu.value['price']}'),
+              Text(
+                '฿${menu.value['price']}',
+                style: kPrimaryTextStyle,
+              ),
             ],
           ),
         ),
-    ]);
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    return _buildOrderDetail();
+    return _buildOrderDetail(context);
   }
 }

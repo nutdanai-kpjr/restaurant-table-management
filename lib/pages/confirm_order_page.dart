@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_table_management/components/primary_scaffold.dart';
 import 'package:restaurant_table_management/pages/create_order_page.dart';
 import 'package:restaurant_table_management/pages/main_page.dart';
-import 'package:restaurant_table_management/services/services.dart';
+import 'package:restaurant_table_management/services/service.dart';
 
 import '../components/buttons/wide_button.dart';
 import '../components/headers/secondary_header.dart';

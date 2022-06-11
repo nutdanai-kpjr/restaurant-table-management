@@ -4,7 +4,7 @@ import 'package:restaurant_table_management/components/order_detail.dart';
 import 'package:restaurant_table_management/components/primary_list_item.dart';
 import 'package:restaurant_table_management/constants.dart';
 import 'package:restaurant_table_management/domains/order.dart';
-import 'package:restaurant_table_management/services/services.dart';
+import 'package:restaurant_table_management/services/service.dart';
 
 class OrderListTab extends StatelessWidget {
   const OrderListTab({Key? key}) : super(key: key);
@@ -48,11 +48,14 @@ class _OrderListState extends State<OrderList> {
       isUpdatable = false}) {
     return Container(
       margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.025),
-      decoration: BoxDecoration(
-        border: Border.all(color: kBorderColor),
-      ),
       child: Column(children: [
-        Text(title),
+        Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(left: 8),
+            child: Text(
+              title,
+              style: kHeaderTextStyle,
+            )),
         ListView.builder(
           shrinkWrap: true,
           itemCount: list.length,
@@ -62,12 +65,17 @@ class _OrderListState extends State<OrderList> {
             List<Widget> buttons = isUpdatable
                 ? [
                     PrimaryButton(
+                        color: kCompletedColor.withOpacity(0.5),
                         text: 'Complete',
                         onPressed: () async {
                           await completeOrder(order.id);
                           _refetch();
                         }),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.height * 0.008,
+                    ),
                     PrimaryButton(
+                        color: kCancelledColor.withOpacity(0.5),
                         text: "Cancel",
                         onPressed: () async {
                           await cancelOrder(order.id);
@@ -85,7 +93,11 @@ class _OrderListState extends State<OrderList> {
                   order: order,
                 ));
           },
-        )
+        ),
+        const Divider(
+          color: kBorderColor,
+          thickness: 1,
+        ),
       ]),
     );
   }

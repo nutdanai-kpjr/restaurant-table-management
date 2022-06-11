@@ -14,7 +14,7 @@ import 'package:restaurant_table_management/components/secondary_list_item.dart'
 import 'package:restaurant_table_management/domains/menu.dart';
 
 import 'package:restaurant_table_management/pages/confirm_order_page.dart';
-import 'package:restaurant_table_management/services/services.dart';
+import 'package:restaurant_table_management/services/service.dart';
 
 /// // On Add Item (Display Edit Quantity Mode in Menuitem))
 // // On Edit Item (Display Edit Quantity Mode in Menuitem))

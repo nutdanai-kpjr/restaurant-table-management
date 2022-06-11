@@ -4,7 +4,7 @@ import 'package:restaurant_table_management/components/table_Item.dart';
 import 'package:restaurant_table_management/domains/table.dart' as domain;
 import 'package:restaurant_table_management/pages/checkout_page.dart';
 import 'package:restaurant_table_management/pages/create_order_page.dart';
-import 'package:restaurant_table_management/services/services.dart';
+import 'package:restaurant_table_management/services/service.dart';
 
 class TableListTab extends StatelessWidget {
   const TableListTab({Key? key}) : super(key: key);
@@ -13,13 +13,7 @@ class TableListTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          child: Text('List Table'),
-        ),
-        Expanded(
-            child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.45,
-                child: TableList()))
+        Expanded(child: TableList()),
       ],
     );
   }
@@ -53,18 +47,29 @@ class _TableListState extends State<TableList> {
         builder: (context, AsyncSnapshot<List<domain.Table>> snapshot) {
           if (snapshot.hasData) {
             var tableList = snapshot.data ?? [];
-            return ListView.builder(
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                mainAxisSpacing: 5,
+                crossAxisSpacing: 5,
+                crossAxisCount: 2,
+              ),
               itemCount: tableList.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 var table = tableList[index];
 
                 if (table.status == 'AVAILABLE') {
-                  return AvaliableTableItem(
-                      tableID: table.id, refresh: _refetch);
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: AvaliableTableItem(
+                        tableID: table.id, refresh: _refetch),
+                  );
                 }
 
-                return InuseTableItem(tableID: table.id, refresh: _refetch);
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InuseTableItem(tableID: table.id, refresh: _refetch),
+                );
               },
             );
           } else {

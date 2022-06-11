@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_table_management/components/buttons/primary_button.dart';
 import 'package:restaurant_table_management/constants.dart';
-import 'package:restaurant_table_management/services/services.dart';
+import 'package:restaurant_table_management/services/service.dart';
 
 import '../pages/checkout_page.dart';
 import '../pages/create_order_page.dart';
@@ -25,22 +25,58 @@ class TableItem extends StatelessWidget {
         margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
         height: MediaQuery.of(context).size.height * 0.2,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
+          border: Border.all(color: kBorderColor, width: 2.0),
+          borderRadius: BorderRadius.circular(15.0),
         ),
         child: Row(
           children: [
             Expanded(
-                flex: 1,
+                flex: 3,
                 child: Container(
-                  color: indicatorColor,
+                  decoration: BoxDecoration(
+                      color: indicatorColor,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(14.5),
+                        bottomLeft: Radius.circular(14.5),
+                      )),
                 )),
             Expanded(
               flex: 25,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(children: [Text(title), Text(status)]),
+                  Column(children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.0125,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.height * 0.0125),
+                      width: double.infinity,
+                      child: Text(
+                        title,
+                        style: kHeaderTextStyle,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.height * 0.0125),
+                      width: double.infinity,
+                      child: Text(
+                        status,
+                        style: kPrimaryTextStyle.copyWith(
+                          color: kSecondaryFontColor,
+                        ),
+                      ),
+                    )
+                  ]),
                   Column(
-                    children: buttons,
+                    children: [
+                      ...buttons,
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.0125,
+                      ),
+                    ],
                   )
                 ],
               ),

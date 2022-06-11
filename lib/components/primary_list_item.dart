@@ -73,9 +73,10 @@ class _PrimaryListItemState extends State<PrimaryListItem> {
           Container(
               margin:
                   EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
-              height: MediaQuery.of(context).size.height * 0.07,
+              height: MediaQuery.of(context).size.height * 0.1,
               decoration: BoxDecoration(
-                border: Border.all(color: kBorderColor),
+                border: Border.all(color: kBorderColor, width: 2.0),
+                borderRadius: BorderRadius.circular(15.0),
               ),
               child: Column(
                 children: [
@@ -85,14 +86,36 @@ class _PrimaryListItemState extends State<PrimaryListItem> {
                         Expanded(
                             flex: 1,
                             child: Container(
-                              color: widget.indicatorColor,
+                              decoration: BoxDecoration(
+                                  color: widget.indicatorColor,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(14.5),
+                                    bottomLeft: Radius.circular(14.5),
+                                  )),
                             )),
                         Expanded(
                           flex: 6,
                           child: Column(
                             children: [
-                              Text(widget.title),
-                              Text(widget.subTitle)
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.01,
+                              ),
+                              Container(
+                                  margin: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.height *
+                                          0.0125),
+                                  width: double.infinity,
+                                  child: Text(widget.title,
+                                      style: kPrimaryTextStyle.copyWith(
+                                          fontSize: kHeaderFontSize))),
+                              Container(
+                                  margin: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.height *
+                                          0.0125),
+                                  width: double.infinity,
+                                  child: Text(widget.subTitle,
+                                      style: kSecondaryTextStyle)),
                             ],
                           ),
                         ),
