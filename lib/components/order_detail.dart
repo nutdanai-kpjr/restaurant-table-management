@@ -46,14 +46,14 @@ class OrderDetails extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Total',
                   textAlign: TextAlign.start,
                   overflow: TextOverflow.ellipsis,
                   style: kHeaderTextStyle,
                 ),
                 Text(
-                  '฿${order.price.toStringAsFixed(1)}',
+                  '฿ ${order.price.toStringAsFixed(1)}',
                   style: kHeaderTextStyle,
                 ),
               ],
@@ -78,7 +78,7 @@ class OrderDetails extends StatelessWidget {
                 style: kPrimaryTextStyle.copyWith(fontSize: kPrimaryFontSize),
               ),
               Text(
-                '฿${menu.value['price']}',
+                '฿ ${menu.value['price']}',
                 style: kPrimaryTextStyle,
               ),
             ],

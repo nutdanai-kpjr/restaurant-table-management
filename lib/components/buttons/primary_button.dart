@@ -89,6 +89,7 @@ class _MenuButtonState extends State<MenuButton> {
   Widget build(BuildContext context) {
     if (quantity == 0 && !isEditing) {
       return PrimaryButton(
+        color: kCompletedColor.withOpacity(0.5),
         text: 'Add',
         onPressed: _turnOnEditMode,
       );
@@ -104,8 +105,15 @@ class _MenuButtonState extends State<MenuButton> {
     } else {
       return Row(
         children: [
-          Text(quantity.toString()),
+          Text(
+            quantity.toString(),
+            style: kPrimaryTextStyle,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.height * 0.025,
+          ),
           PrimaryButton(
+            color: kInprogressColor.withOpacity(0.5),
             text: 'Edit',
             onPressed: _turnOnEditMode,
           )

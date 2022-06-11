@@ -85,11 +85,17 @@ class _CheckoutListState extends State<CheckoutList> {
   }) {
     return Container(
       margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
-      decoration: BoxDecoration(
-        border: Border.all(color: kBorderColor),
-      ),
       child: Column(children: [
-        Text(title),
+        SizedBox(
+            width: double.infinity,
+            child: Text(
+              title,
+              style: kHeaderTextStyle,
+            )),
+        const Divider(
+          color: kBorderColor,
+          thickness: 2,
+        ),
         ListView.builder(
           shrinkWrap: true,
           itemCount: list.length,
@@ -99,7 +105,12 @@ class _CheckoutListState extends State<CheckoutList> {
                 isExapandable: true,
                 title: order.id,
                 subTitle: '',
-                rightSizeChildren: [Text('฿${order.price.toString()}')],
+                rightSizeChildren: [
+                  Text(
+                    '฿ ${order.price.toString()}',
+                    style: kHeaderTextStyle,
+                  )
+                ],
                 indicatorColor: kCompletedColor,
                 expandedChild: OrderDetails(
                   order: order,
@@ -121,9 +132,38 @@ class _CheckoutListState extends State<CheckoutList> {
               child: Column(children: [
                 _buildOrderList(
                   list: checkoutOrderList,
-                  title: 'Checkout Summary',
+                  title: 'Order Summary',
                 ),
-                Text(totalPrice.toString()),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.height * 0.015),
+                  child: const Divider(
+                    color: kPrimaryFontColor,
+                    thickness: 1,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                      vertical: MediaQuery.of(context).size.height * 0.015,
+                      horizontal: MediaQuery.of(context).size.width * 0.1),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Total',
+                        textAlign: TextAlign.start,
+                        overflow: TextOverflow.ellipsis,
+                        style: kHeaderTextStyle.copyWith(
+                            fontSize: kAppTitle2FontSize),
+                      ),
+                      Text(
+                        '฿ ${totalPrice.toStringAsFixed(1)}',
+                        style: kHeaderTextStyle.copyWith(
+                            fontSize: kAppTitle2FontSize),
+                      ),
+                    ],
+                  ),
+                ),
               ]),
             );
           } else {

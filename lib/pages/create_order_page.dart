@@ -11,6 +11,7 @@ import 'package:restaurant_table_management/components/buttons/wide_button.dart'
 import 'package:restaurant_table_management/components/headers/secondary_header.dart';
 import 'package:restaurant_table_management/components/primary_scaffold.dart';
 import 'package:restaurant_table_management/components/secondary_list_item.dart';
+import 'package:restaurant_table_management/constants.dart';
 import 'package:restaurant_table_management/domains/menu.dart';
 
 import 'package:restaurant_table_management/pages/confirm_order_page.dart';
@@ -124,20 +125,49 @@ class _MenuListState extends State<MenuList> {
           if (snapshot.hasData) {
             var menuList = snapshot.data ?? [];
 
-            return Column(children: [
-              Text("Menu"),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: menuList.length,
-                itemBuilder: (context, index) {
-                  var menu = menuList[index];
-                  if (showSelectedOnly) {
-                    if (selectedMenusQuantity[menu.id] != null) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(children: [
+                const SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      'Menu',
+                      style: kHeaderTextStyle,
+                    )),
+                const Divider(
+                  color: kBorderColor,
+                  thickness: 2,
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: menuList.length,
+                  itemBuilder: (context, index) {
+                    var menu = menuList[index];
+                    if (showSelectedOnly) {
+                      if (selectedMenusQuantity[menu.id] != null) {
+                        return SecondaryListItem(
+                          title: menu.name,
+                          rightSideChildren: [
+                            MenuButton(
+                              quantity: selectedMenusQuantity[menu.id] ?? 0,
+                              onQuantityChanged: (int quantity) {
+                                setState(() {
+                                  selectedMenusQuantity[menu.id] = quantity;
+                                });
+                                onUpdateSelectedMenusQuantity(
+                                    selectedMenusQuantity);
+                              },
+                            )
+                          ],
+                        );
+                      } else {
+                        return Container();
+                      }
+                    } else {
                       return SecondaryListItem(
                         title: menu.name,
                         rightSideChildren: [
                           MenuButton(
-                            quantity: selectedMenusQuantity[menu.id] ?? 0,
                             onQuantityChanged: (int quantity) {
                               setState(() {
                                 selectedMenusQuantity[menu.id] = quantity;
@@ -148,27 +178,11 @@ class _MenuListState extends State<MenuList> {
                           )
                         ],
                       );
-                    } else
-                      return Container();
-                  } else {
-                    return SecondaryListItem(
-                      title: menu.name,
-                      rightSideChildren: [
-                        MenuButton(
-                          onQuantityChanged: (int quantity) {
-                            setState(() {
-                              selectedMenusQuantity[menu.id] = quantity;
-                            });
-                            onUpdateSelectedMenusQuantity(
-                                selectedMenusQuantity);
-                          },
-                        )
-                      ],
-                    );
-                  }
-                },
-              )
-            ]);
+                    }
+                  },
+                )
+              ]),
+            );
           } else {
             return const Center(child: CircularProgressIndicator());
           }

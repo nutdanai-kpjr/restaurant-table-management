@@ -94,7 +94,7 @@ class _PrimaryListItemState extends State<PrimaryListItem> {
                                   )),
                             )),
                         Expanded(
-                          flex: 6,
+                          flex: 5,
                           child: Column(
                             children: [
                               SizedBox(

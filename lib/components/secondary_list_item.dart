@@ -38,18 +38,27 @@ class SecondaryListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
+        padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.0025),
         height: MediaQuery.of(context).size.height * 0.075,
         decoration: BoxDecoration(
-          border: Border.all(color: kBorderColor),
+          border: Border.all(color: kBorderColor, width: 2.0),
+          borderRadius: BorderRadius.circular(15.0),
         ),
         child: Row(
           children: [
             Expanded(
               flex: 1,
-              child: Text(title),
+              child: Container(
+                margin: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.height * 0.015),
+                child: Text(
+                  title,
+                  style: kHeaderTextStyle,
+                ),
+              ),
             ),
             Expanded(
-                flex: 3,
+                flex: 2,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(

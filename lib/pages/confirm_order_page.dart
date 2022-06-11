@@ -64,14 +64,13 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
             }),
         body: Column(children: [
           SecondaryHeader(
-            title: "New Order",
+            title: "Confirm Order",
             tableId: 'T001',
             time: '3 Jun | 14.00',
             onPressedBackButton: () {
               Navigator.pop(context, selectedMenusQuantity);
             },
           ),
-          Text('Order Summary'),
           MenuList(
               showSelectedOnly: true,
               selectedMenusQuantity: selectedMenusQuantity,

@@ -15,7 +15,13 @@ class BackNavigatorButton extends StatelessWidget {
           color: kPrimaryFontColor,
           onPressed: onPressed,
         ),
-        Text('Back')
+        InkWell(
+          onTap: onPressed,
+          child: const Text(
+            'Back',
+            style: kPrimaryTextStyle,
+          ),
+        )
       ],
     );
   }
