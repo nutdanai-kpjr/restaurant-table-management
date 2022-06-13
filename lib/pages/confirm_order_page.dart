@@ -43,7 +43,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
     });
   }
 
-  _onConfirm() {}
+  // _onConfirm() {}
+
   @override
   Widget build(BuildContext context) {
     return PrimaryScaffold(
@@ -57,10 +58,11 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
                   menuIdList.add(key);
                 }
               });
-              await createOrder(tableID, menuIdList, context: context);
+              createOrder(tableID, menuIdList, context: context).then((value) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const MainPage()));
+              });
               // Add API request here
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const MainPage()));
             }),
         body: Column(children: [
           SecondaryHeader(

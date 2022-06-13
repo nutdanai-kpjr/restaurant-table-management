@@ -7,6 +7,7 @@ import 'package:restaurant_table_management/components/buttons/primary_button.da
 import 'package:restaurant_table_management/domains/order.dart';
 import 'package:restaurant_table_management/domains/orderSummary.dart';
 
+import '../domains/member.dart';
 import '../domains/menu.dart';
 import '../domains/table.dart' as domain;
 
@@ -108,7 +109,7 @@ Future<Map<String, List<Order>>> getOrders({required context}) async {
 }
 
 Future<OrderSummary> getCheckoutOrders(String tableID,
-    {required context}) async {
+    {required context, memberPhone}) async {
   final response = await post(Uri.parse(
     '$restaurantBaseUrl/checkOut?tableID=$tableID',
   ));
@@ -233,4 +234,26 @@ Future<void> showErrorDialog(context, body) async {
           ],
         );
       });
+}
+
+Future<Member?> checkMembership(String phone, {required context}) async {
+  return Member(
+      firstName: 'John',
+      lastName: 'Doe',
+      phoneNumber: '0123456789',
+      id: '1',
+      email: 'John@email.com');
+  // final response = await post(Uri.parse(
+  //   '$restaurantBaseUrl/checkMembership?phone=$phone',
+  // ));
+
+  // // final response = await rootBundle.loadString('assets/json/get_orders.json');
+  // if (response.statusCode == 200) {
+  //   return true;
+  // } else {
+  //   var body = json.decode(response.body);
+  //   await showErrorDialog(context, body);
+  //   return false;
+  //   // }
+  // }
 }

@@ -37,3 +37,19 @@ const TextStyle kSecondaryTextStyle = TextStyle(
   fontSize: kSecondaryFontSize,
   color: kSecondaryFontColor,
 );
+
+InputDecoration kTextFieldDecorationWithHintText(String hintText) =>
+    InputDecoration(
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: kPrimaryFontColor),
+          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          borderSide: BorderSide(color: kBorderColor),
+        ),
+        hintText: hintText,
+        hintStyle: const TextStyle(
+          // fontSize: kListItemSubTitleFontSize,
+          color: kSecondaryFontColor,
+        ));

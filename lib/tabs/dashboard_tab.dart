@@ -8,13 +8,18 @@ import 'package:restaurant_table_management/services/service.dart';
 
 import '../components/primary_circular_progress_indicator.dart';
 
-class OrderListTab extends StatelessWidget {
-  const OrderListTab({Key? key}) : super(key: key);
+class DashBoardTab extends StatelessWidget {
+  const DashBoardTab({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [Expanded(child: OrderList())],
+      children: const [
+        Expanded(child: Text('Today, This Week ,This Month Buttonset')),
+        Expanded(child: Text('Overview Section with 3 Block Section')),
+        Expanded(child: Text('Most Popular Dishes Section ')),
+        Expanded(child: Text('View Reports Section ')),
+      ],
     );
   }
 }

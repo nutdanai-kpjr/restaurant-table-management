@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_table_management/components/buttons/primary_button.dart';
 import 'package:restaurant_table_management/components/buttons/wide_button.dart';
+import 'package:restaurant_table_management/components/headers/list_header.dart';
 import 'package:restaurant_table_management/components/headers/secondary_header.dart';
 import 'package:restaurant_table_management/components/primary_scaffold.dart';
 import 'package:restaurant_table_management/components/secondary_list_item.dart';
@@ -130,16 +131,7 @@ class _MenuListState extends State<MenuList> {
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(children: [
-                const SizedBox(
-                    width: double.infinity,
-                    child: Text(
-                      'Menu',
-                      style: kHeaderTextStyle,
-                    )),
-                const Divider(
-                  color: kBorderColor,
-                  thickness: 2,
-                ),
+                const ListHeader(title: "Menu"),
                 ListView.builder(
                   shrinkWrap: true,
                   itemCount: menuList.length,
