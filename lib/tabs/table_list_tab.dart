@@ -51,8 +51,8 @@ class _TableListState extends State<TableList> {
             var tableList = snapshot.data ?? [];
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisSpacing: 5,
-                crossAxisSpacing: 5,
+                mainAxisSpacing: 2,
+                crossAxisSpacing: 2,
                 crossAxisCount: 2,
               ),
               itemCount: tableList.length,
@@ -62,14 +62,14 @@ class _TableListState extends State<TableList> {
 
                 if (table.status == 'AVAILABLE') {
                   return Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(4.0),
                     child: AvaliableTableItem(
                         tableID: table.id, refresh: _refetch),
                   );
                 }
 
                 return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(4.0),
                   child: InuseTableItem(tableID: table.id, refresh: _refetch),
                 );
               },

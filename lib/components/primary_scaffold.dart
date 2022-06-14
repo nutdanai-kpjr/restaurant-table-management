@@ -13,6 +13,7 @@ class PrimaryScaffold extends StatelessWidget {
       appBar: appbar,
       body: SafeArea(child: body),
       bottomNavigationBar: bottomNavigationBar,
+      resizeToAvoidBottomInset: false,
     );
   }
 }

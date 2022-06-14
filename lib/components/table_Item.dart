@@ -23,7 +23,7 @@ class TableItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
-        height: MediaQuery.of(context).size.height * 0.2,
+        // height: MediaQuery.of(context).size.height * 0.2,
         decoration: BoxDecoration(
           border: Border.all(color: kBorderColor, width: 2.0),
           borderRadius: BorderRadius.circular(15.0),
@@ -41,7 +41,7 @@ class TableItem extends StatelessWidget {
                       )),
                 )),
             Expanded(
-              flex: 25,
+              flex: 26,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

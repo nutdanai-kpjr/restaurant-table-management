@@ -30,9 +30,11 @@ class SecondaryListItem extends StatelessWidget {
     Key? key,
     required this.title,
     required this.rightSideChildren,
+    this.isDisabled = false,
   }) : super(key: key);
   final String title;
   final List<Widget> rightSideChildren;
+  final bool isDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,9 @@ class SecondaryListItem extends StatelessWidget {
         padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.0025),
         height: MediaQuery.of(context).size.height * 0.075,
         decoration: BoxDecoration(
-          border: Border.all(color: kBorderColor, width: 2.0),
+          border: Border.all(
+              color: !isDisabled ? kBorderColor : kBorderColor.withOpacity(0.5),
+              width: 2.0),
           borderRadius: BorderRadius.circular(15.0),
         ),
         child: Row(
@@ -53,7 +57,10 @@ class SecondaryListItem extends StatelessWidget {
                     left: MediaQuery.of(context).size.height * 0.015),
                 child: Text(
                   title,
-                  style: kHeaderTextStyle,
+                  style: !isDisabled
+                      ? kHeaderTextStyle
+                      : kHeaderTextStyle.copyWith(
+                          color: kPrimaryFontColor.withOpacity(0.5)),
                 ),
               ),
             ),
@@ -63,7 +70,7 @@ class SecondaryListItem extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: rightSideChildren,
+                    children: !isDisabled ? rightSideChildren : [],
                   ),
                 )),
           ],

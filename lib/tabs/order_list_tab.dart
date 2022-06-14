@@ -91,7 +91,7 @@ class _OrderListState extends State<OrderList> {
             return PrimaryListItem(
                 isExapandable: true,
                 title: order.id,
-                subTitle: 'Table: ${order.tableId ?? ' '}',
+                subTitle: 'Table: ${order.tableId}',
                 rightSizeChildren: buttons,
                 indicatorColor: color,
                 expandedChild: OrderDetails(

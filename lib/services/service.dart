@@ -1,18 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:restaurant_table_management/components/buttons/primary_button.dart';
 import 'package:restaurant_table_management/domains/order.dart';
 import 'package:restaurant_table_management/domains/orderSummary.dart';
 
-import '../domains/member.dart';
 import '../domains/menu.dart';
 import '../domains/table.dart' as domain;
 
-// const String baseUrl = 'http://192.168.86.76:50001/';
-const String baseUrl = 'http://10.0.2.2:50001/training-ws/'; // for emulator
+const String baseUrl = 'http://192.168.86.76:50001/restaurant';
+// const String baseUrl = 'http://10.0.2.2:50001/training-ws/'; // for emulator
 // http://localhost:50001/training-ws/
 const String restaurantBaseUrl = '$baseUrl/api/v1/restaurant';
 
@@ -58,14 +56,15 @@ Future<List<Menu>> getMenus({required context}) async {
 }
 
 Future<List<Order>> getOrderHistory({required context}) async {
-  final response = await get(Uri.parse('$internalBaseUrl/getHistoryOrder'));
+  final response = await get(Uri.parse('$internalBaseUrl/getHistory'));
 
 // final response = await rootBundle.loadString('assets/json/get_menu.json');
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     var parsedJson = jsonDecode(response.body);
-    List<Order> results =
-        parsedJson.map<Order>((order) => Order.fromJson(order)).toList();
+    List<Order> results = parsedJson
+        .map<Order>((order) => Order.fromJson(order, isHistory: true))
+        .toList();
     return results;
   } else {
     var body = jsonDecode(response.body);
@@ -109,7 +108,7 @@ Future<Map<String, List<Order>>> getOrders({required context}) async {
 }
 
 Future<OrderSummary> getCheckoutOrders(String tableID,
-    {required context, memberPhone}) async {
+    {required context}) async {
   final response = await post(Uri.parse(
     '$restaurantBaseUrl/checkOut?tableID=$tableID',
   ));
@@ -124,8 +123,38 @@ Future<OrderSummary> getCheckoutOrders(String tableID,
     var body = jsonDecode(response.body);
     await showErrorDialog(context, body);
     Navigator.maybePop(context);
-    return OrderSummary(orderList: [], totalPrice: 0.0);
+    return OrderSummary.empty();
     // }
+  }
+}
+
+Future<OrderSummary> getCheckOutOrdersWithMembership(String tableID,
+    {required context,
+    required String phoneNumber,
+    required OrderSummary orderSummary}) async {
+  final requestBody = json.encode({
+    "wrapper": orderSummary,
+    "phoneNumber": phoneNumber,
+    "tableID": tableID
+  });
+  final response = await post(
+      Uri.parse(
+        '$restaurantBaseUrl/checkOutMember',
+      ),
+      headers: {"Content-Type": "application/json"},
+      body: requestBody);
+
+  // final response = await rootBundle.loadString('assets/json/get_orders.json');
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    var parsedJson = jsonDecode(response.body);
+    OrderSummary result = OrderSummary.fromJson(parsedJson);
+    return result;
+  } else {
+    var body = jsonDecode(response.body);
+    await showErrorDialog(context, body);
+    Navigator.maybePop(context);
+    return OrderSummary.empty();
   }
 }
 
@@ -142,7 +171,6 @@ Future<bool> confirmCheckout(String tableID, {required context}) async {
     return false;
     // If the server did not return a 200 OK response,
     // then throw an exception.
-    throw Exception('Failed to check out');
     // }
   }
 }
@@ -173,6 +201,7 @@ Future<bool> _updateOrder(String orderID, String status,
     return true;
   } else {
     var body = json.decode(response.body);
+
     await showErrorDialog(context, body);
     return false;
     // }
@@ -234,26 +263,4 @@ Future<void> showErrorDialog(context, body) async {
           ],
         );
       });
-}
-
-Future<Member?> checkMembership(String phone, {required context}) async {
-  return Member(
-      firstName: 'John',
-      lastName: 'Doe',
-      phoneNumber: '0123456789',
-      id: '1',
-      email: 'John@email.com');
-  // final response = await post(Uri.parse(
-  //   '$restaurantBaseUrl/checkMembership?phone=$phone',
-  // ));
-
-  // // final response = await rootBundle.loadString('assets/json/get_orders.json');
-  // if (response.statusCode == 200) {
-  //   return true;
-  // } else {
-  //   var body = json.decode(response.body);
-  //   await showErrorDialog(context, body);
-  //   return false;
-  //   // }
-  // }
 }

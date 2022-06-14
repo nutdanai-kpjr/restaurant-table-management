@@ -6,36 +6,61 @@
 // - List<Menu>
 // - price (double)
 
+import 'dart:convert';
+
 import 'package:restaurant_table_management/domains/menu.dart';
 
 class Order {
   final String id;
   final String status;
-  final String? tableId;
+  final String tableId;
+  final String? memberId;
   final List<Menu> menuList;
   final int price;
+  final bool isHistory;
+  final DateTime startTime;
+  final DateTime updateTime;
+  final DateTime checkInTime;
+  final DateTime checkOutTime;
 
   Order({
     required this.id,
     required this.status,
-    this.tableId,
+    required this.tableId,
     required this.menuList,
     required this.price,
+    this.isHistory = false,
+    this.memberId,
+    required this.startTime,
+    required this.updateTime,
+    required this.checkInTime,
+    required this.checkOutTime,
   });
-  Order.fromJson(parsedJson)
+  Order.fromJson(parsedJson, {this.isHistory = false})
       : id = parsedJson['orderID'],
         status = parsedJson['orderStatus'],
         tableId = parsedJson['tableID'],
         menuList =
             parsedJson['menuOrder'].map<Menu>((e) => Menu.fromJson(e)).toList(),
-        price = parsedJson['orderPrice'];
+        price = parsedJson['orderPrice'],
+        startTime = DateTime.parse(parsedJson['startTime']),
+        updateTime = DateTime.parse(parsedJson['updateTime']),
+        checkInTime = DateTime.parse(parsedJson['checkInTime']),
+        checkOutTime = DateTime.parse(parsedJson['checkOutTime']),
+        memberId = parsedJson['memberID'];
 
-  void test() {}
-}
-
-enum OrderStatus {
-  pending,
-  completed,
-  canceled,
-  hidden,
+  Map<String, dynamic> toJson() {
+    return {
+      'orderID': id,
+      'orderStatus': status,
+      'tableID': tableId,
+      'menuOrder': menuList,
+      'orderPrice': price,
+      'startTime': startTime.toIso8601String(),
+      'updateTime': updateTime.toIso8601String(),
+      'checkInTime': checkInTime.toIso8601String(),
+      'checkOutTime': checkOutTime.toIso8601String(),
+      'memberID': memberId,
+    };
+  }
 }

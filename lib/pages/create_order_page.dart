@@ -141,6 +141,7 @@ class _MenuListState extends State<MenuList> {
                       if (selectedMenusQuantity[menu.id] != null) {
                         return SecondaryListItem(
                           title: menu.name,
+                          isDisabled: !menu.isAvailable,
                           rightSideChildren: [
                             MenuButton(
                               quantity: selectedMenusQuantity[menu.id] ?? 0,
@@ -160,6 +161,7 @@ class _MenuListState extends State<MenuList> {
                     } else {
                       return SecondaryListItem(
                         title: menu.name,
+                        isDisabled: !menu.isAvailable,
                         rightSideChildren: [
                           MenuButton(
                             onQuantityChanged: (int quantity) {

@@ -20,6 +20,7 @@ import '../constants.dart';
 import '../domains/member.dart';
 import '../domains/order.dart';
 import '../domains/orderSummary.dart';
+import '../services/member_service.dart';
 import '../services/service.dart';
 
 class CheckOutPage extends StatefulWidget {
@@ -34,6 +35,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
   late Future<OrderSummary> _getCheckoutList;
   late final tableID = widget.tableID;
   String dropdownvalue = 'Cash';
+  late OrderSummary orderSummary;
   @override
   void initState() {
     super.initState();
@@ -95,6 +97,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
   _showDialog(context) {
     bool isRegister = false;
     Member? member;
+    String phoneNumber = "";
+    TextEditingController _firstNameCtrl = TextEditingController();
+    TextEditingController _lastNameCtrl = TextEditingController();
+    TextEditingController _emailCtrl = TextEditingController();
 
     showDialog(
         context: context,
@@ -108,14 +114,18 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 setStateDialog(() {
                   if (mem != null) {
                     member = mem;
+                    isRegister = false;
+                  } else {
                     isRegister = true;
                   }
+                  phoneNumber = value;
                 });
                 //  if not a member -> Set register = true;
 
-              } else {
+              } else if (value.length < 10 && member != null) {
                 setStateDialog(() {
                   member = null;
+                  isRegister = false;
                 });
               }
             }
@@ -134,28 +144,90 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 const Text('Enter customer phone number',
                     style: kPrimaryTextStyle),
                 _buildPhoneNumberTextField(onChanged: _onPhoneNumberChanged),
-                Text(
-                    member == null
-                        ? 'No membership'
-                        : 'Membership: ${member?.fullName}',
-                    style: kPrimaryTextStyle),
+                member == null
+                    ? PrimaryButton(
+                        text: isRegister
+                            ? 'Cancel Registeration'
+                            : 'Register new',
+                        onPressed: () {
+                          setStateDialog(() {
+                            isRegister = !isRegister;
+                          });
+                        },
+                      )
+                    : Text('${member?.tier}: ${member?.fullName}',
+                        style: kPrimaryTextStyle),
+                const SizedBox(height: 20),
                 isRegister
                     ? Column(
                         children: [
-                          Divider(
-                            height: MediaQuery.of(context).size.height * 0.075,
+                          const Divider(
+                            // height: MediaQuery.of(context).size.height * 0.075,
                             color: kPrimaryFontColor,
                             thickness: 1,
                           ),
-                          _buildMemberInfoTextField(title: 'Firstname'),
-                          _buildMemberInfoTextField(title: 'Lastname'),
-                          _buildMemberInfoTextField(title: 'Email'),
+                          _buildMemberInfoTextField(
+                              title: 'Firstname', textCtrl: _firstNameCtrl),
+                          _buildMemberInfoTextField(
+                              title: 'Lastname', textCtrl: _lastNameCtrl),
+                          _buildMemberInfoTextField(
+                              title: 'Email', textCtrl: _emailCtrl),
                         ],
                       )
                     : Container(),
-                PrimaryButton(
-                  text: isRegister ? 'Register and Confirm' : 'Confirm',
-                  onPressed: () {},
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    PrimaryButton(
+                      color: kCancelledColor.withOpacity(0.5),
+                      text: 'Cancel',
+                      onPressed: () {
+                        Navigator.maybePop(context);
+                      },
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    PrimaryButton(
+                      color: kCompletedColor.withOpacity(0.5),
+                      text: isRegister ? 'Register' : 'Confirm',
+                      onPressed: () async {
+                        if (isRegister) {
+                          await addMember(
+                              Member(
+                                  phoneNumber: phoneNumber,
+                                  firstName: _firstNameCtrl.text,
+                                  lastName: _lastNameCtrl.text,
+                                  email: _emailCtrl.text),
+                              context: context);
+                          var mem = await checkMembership(phoneNumber,
+                              context: context);
+                          //  if already a member
+                          setStateDialog(() {
+                            if (mem != null) {
+                              member = mem;
+                              isRegister = false;
+                            } else {
+                              isRegister = true;
+                            }
+                          });
+
+                          //cra
+                        } else {
+                          Navigator.maybePop(context);
+
+                          setState(() {
+                            _getCheckoutList = getCheckOutOrdersWithMembership(
+                                tableID,
+                                phoneNumber: phoneNumber,
+                                orderSummary: orderSummary,
+                                context: context);
+                          });
+                        }
+                      },
+                    ),
+                  ],
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.025)
               ]),
@@ -243,8 +315,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
         future: _getCheckoutList,
         builder: (context, AsyncSnapshot<OrderSummary> snapshot) {
           if (snapshot.hasData) {
+            orderSummary = snapshot.data ?? OrderSummary.empty();
             List<Order> checkoutOrderList = snapshot.data?.orderList ?? [];
             double totalPrice = snapshot.data?.totalPrice ?? 0;
+            double discount = snapshot.data?.discount ?? 0;
+            double finalPrice = snapshot.data?.finalPrice ?? 0;
+
             return SingleChildScrollView(
               child: Column(children: [
                 _buildOrderList(
@@ -260,7 +336,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     thickness: 1,
                   ),
                 ),
-                _buildTotalSummary(context, totalPrice),
+                _buildTotalSummary(context,
+                    totalPrice: totalPrice,
+                    discount: discount,
+                    finalPrice: finalPrice),
               ]),
             );
           } else {
@@ -320,30 +399,65 @@ class _CheckOutPageState extends State<CheckOutPage> {
             Text('ATM Handler')
           else if (dropdownvalue == 'Rabbit Pay')
             Text('Rabbit Pay Handler')
-          else
-            Text('Cash')
         ],
       ),
     );
   }
 
-  _buildTotalSummary(BuildContext context, double totalPrice) {
+  _buildTotalSummary(BuildContext context,
+      {required double totalPrice,
+      required double discount,
+      required double finalPrice}) {
     return Container(
       margin: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height * 0.015,
           horizontal: MediaQuery.of(context).size.width * 0.1),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Text(
-            'Total',
-            textAlign: TextAlign.start,
-            overflow: TextOverflow.ellipsis,
-            style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Sub-Total',
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.ellipsis,
+                style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
+              ),
+              Text(
+                '฿ ${totalPrice.toStringAsFixed(1)}',
+                style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
+              ),
+            ],
           ),
-          Text(
-            '฿ ${totalPrice.toStringAsFixed(1)}',
-            style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Discount - ',
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.ellipsis,
+                style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
+              ),
+              Text(
+                '฿ ${discount.toStringAsFixed(1)}',
+                style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Total',
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.ellipsis,
+                style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
+              ),
+              Text(
+                '฿ ${finalPrice.toStringAsFixed(1)}',
+                style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
+              ),
+            ],
           ),
         ],
       ),
