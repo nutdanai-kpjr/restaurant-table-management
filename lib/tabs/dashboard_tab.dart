@@ -22,9 +22,26 @@ class DashBoardTab extends StatefulWidget {
 class _DashBoardTabState extends State<DashBoardTab> {
   List<bool> overviewMode = [true, false, false];
 
+  late Future<Map<String, List<Order>>> _getOrderList;
+
+  @override
+  void initState() {
+    super.initState();
+    _getOrderList = getOrders(context: context);
+  }
+
+  _refetch() {
+    setState(() {
+      _getOrderList = getOrders(context: context);
+    });
+  }
+
   _buildOverviewModeSelection() {
     return ToggleButtons(
       renderBorder: false,
+      fillColor: Colors.transparent,
+      selectedColor: kPrimaryFontColor,
+      splashColor: Colors.transparent,
       onPressed: (int index) {
         setState(() {
           for (int buttonIndex = 0;
@@ -39,10 +56,19 @@ class _DashBoardTabState extends State<DashBoardTab> {
         });
       },
       isSelected: overviewMode,
-      children: const <Widget>[
-        PrimaryButton(text: 'Today'),
-        PrimaryButton(text: 'This Week'),
-        PrimaryButton(text: 'This Month'),
+      children: <Widget>[
+        PrimaryButton(
+          text: 'Today',
+          color: overviewMode[0] ? kCompletedColor : kBorderColor,
+        ),
+        PrimaryButton(
+          text: 'This Week',
+          color: overviewMode[1] ? kCompletedColor : kBorderColor,
+        ),
+        PrimaryButton(
+          text: 'This Month',
+          color: overviewMode[2] ? kCompletedColor : kBorderColor,
+        ),
       ],
     );
   }

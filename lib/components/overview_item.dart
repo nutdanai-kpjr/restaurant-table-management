@@ -19,7 +19,7 @@ class OverviewItem extends StatelessWidget {
       width: 100,
       height: 100,
       decoration: BoxDecoration(
-        border: Border.all(color: indicatorColor, width: 2.0),
+        border: Border.all(color: indicatorColor.withOpacity(0.5), width: 2.0),
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: Column(children: [
