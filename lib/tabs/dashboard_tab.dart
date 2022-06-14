@@ -1,29 +1,106 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_table_management/components/buttons/primary_button.dart';
+import 'package:restaurant_table_management/components/buttons/wide_button.dart';
+import 'package:restaurant_table_management/components/headers/list_header.dart';
 import 'package:restaurant_table_management/components/order_detail.dart';
+import 'package:restaurant_table_management/components/overview_item.dart';
 import 'package:restaurant_table_management/components/primary_list_item.dart';
+import 'package:restaurant_table_management/components/secondary_list_item.dart';
 import 'package:restaurant_table_management/constants.dart';
 import 'package:restaurant_table_management/domains/order.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
 import '../components/primary_circular_progress_indicator.dart';
 
-class DashBoardTab extends StatelessWidget {
+class DashBoardTab extends StatefulWidget {
   const DashBoardTab({Key? key}) : super(key: key);
+
+  @override
+  State<DashBoardTab> createState() => _DashBoardTabState();
+}
+
+class _DashBoardTabState extends State<DashBoardTab> {
+  List<bool> overviewMode = [true, false, false];
+
+  _buildOverviewModeSelection() {
+    return ToggleButtons(
+      renderBorder: false,
+      onPressed: (int index) {
+        setState(() {
+          for (int buttonIndex = 0;
+              buttonIndex < overviewMode.length;
+              buttonIndex++) {
+            if (buttonIndex == index) {
+              overviewMode[buttonIndex] = true;
+            } else {
+              overviewMode[buttonIndex] = false;
+            }
+          }
+        });
+      },
+      isSelected: overviewMode,
+      children: const <Widget>[
+        PrimaryButton(text: 'Today'),
+        PrimaryButton(text: 'This Week'),
+        PrimaryButton(text: 'This Month'),
+      ],
+    );
+  }
+
+  _buildOverviewSection() {
+    return Column(
+      children: [
+        ListHeader(title: 'Overview'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            OverviewItem(title: '10,000', label: 'Revenue'),
+            OverviewItem(title: '10,000', label: 'Revenue'),
+            OverviewItem(title: '10,000', label: 'Revenue'),
+          ],
+        )
+      ],
+    );
+  }
+
+  _buildPopularMenuSection() {
+    return Column(
+      children: [
+        ListHeader(title: 'Most Popular Menu'),
+        Column(
+          children: [
+            SecondaryListItem(
+              title: 'Revenue',
+              rightSideChildren: [Text('258 Dishes')],
+            ),
+            SecondaryListItem(
+              title: 'Revenue',
+              rightSideChildren: [Text('258 Dishes')],
+            ),
+            SecondaryListItem(
+              title: 'Revenue',
+              rightSideChildren: [Text('258 Dishes')],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Expanded(child: Text('Today, This Week ,This Month Buttonset')),
-        Expanded(child: Text('Overview Section with 3 Block Section')),
-        Expanded(child: Text('Most Popular Dishes Section ')),
-        Expanded(child: Text('View Reports Section ')),
-        PrimaryButton(
-          text: 'Test',
-          onPressed: () async {
-            await getTableList(context: context);
-          },
+        Expanded(flex: 1, child: _buildOverviewModeSelection()),
+        Expanded(flex: 3, child: _buildOverviewSection()),
+        Expanded(flex: 3, child: _buildPopularMenuSection()),
+        Expanded(
+          child: WideButton(
+            title: 'View Reports',
+            onPressed: () async {
+              // await getTableList(context: context);
+            },
+          ),
         ),
       ],
     );
