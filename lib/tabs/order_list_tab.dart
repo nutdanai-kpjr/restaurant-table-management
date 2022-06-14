@@ -47,7 +47,7 @@ class _OrderListState extends State<OrderList> {
       required Color color,
       isUpdatable = false}) {
     return Container(
-      margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.025),
+      margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.03),
       child: Column(children: [
         Container(
             width: double.infinity,
@@ -57,6 +57,7 @@ class _OrderListState extends State<OrderList> {
               style: kHeaderTextStyle,
             )),
         ListView.builder(
+          reverse: true,
           shrinkWrap: true,
           itemCount: list.length,
           itemBuilder: (context, index) {

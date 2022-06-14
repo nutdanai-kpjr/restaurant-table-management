@@ -19,9 +19,9 @@ class Order {
   final int price;
   final bool isHistory;
   final DateTime startTime;
-  final DateTime updateTime;
-  final DateTime checkInTime;
-  final DateTime checkOutTime;
+  final DateTime? updateTime;
+  final DateTime? checkInTime;
+  final DateTime? checkOutTime;
 
   Order({
     required this.id,
@@ -32,7 +32,7 @@ class Order {
     this.isHistory = false,
     this.memberId,
     required this.startTime,
-    required this.updateTime,
+    this.updateTime,
     required this.checkInTime,
     required this.checkOutTime,
   });
@@ -44,9 +44,15 @@ class Order {
             parsedJson['menuOrder'].map<Menu>((e) => Menu.fromJson(e)).toList(),
         price = parsedJson['orderPrice'],
         startTime = DateTime.parse(parsedJson['startTime']),
-        updateTime = DateTime.parse(parsedJson['updateTime']),
-        checkInTime = DateTime.parse(parsedJson['checkInTime']),
-        checkOutTime = DateTime.parse(parsedJson['checkOutTime']),
+        updateTime = parsedJson['updateTime'] != null
+            ? DateTime.parse(parsedJson['updateTime'])
+            : null,
+        checkInTime = parsedJson['checkInTime'] != null
+            ? DateTime.parse(parsedJson['checkInTime'])
+            : null,
+        checkOutTime = parsedJson['checkOutTime'] != null
+            ? DateTime.parse(parsedJson['checkOutTime'])
+            : null,
         memberId = parsedJson['memberID'];
 
   Map<String, dynamic> toJson() {
@@ -57,9 +63,9 @@ class Order {
       'menuOrder': menuList,
       'orderPrice': price,
       'startTime': startTime.toIso8601String(),
-      'updateTime': updateTime.toIso8601String(),
-      'checkInTime': checkInTime.toIso8601String(),
-      'checkOutTime': checkOutTime.toIso8601String(),
+      'updateTime': updateTime?.toIso8601String(),
+      'checkInTime': checkInTime?.toIso8601String(),
+      'checkOutTime': checkOutTime?.toIso8601String(),
       'memberID': memberId,
     };
   }

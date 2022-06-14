@@ -64,19 +64,23 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
               });
               // Add API request here
             }),
-        body: Column(children: [
-          SecondaryHeader(
-            title: "Confirm Order",
-            tableId: 'Table: $tableID',
-            time: DateTime.now().toString().substring(0, 16),
-            onPressedBackButton: () {
-              Navigator.pop(context, selectedMenusQuantity);
-            },
-          ),
-          MenuList(
-              showSelectedOnly: true,
-              selectedMenusQuantity: selectedMenusQuantity,
-              onUpdateSelectedMenusQuantity: _updateSelectedMenusQuantity)
-        ]));
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.03),
+          child: Column(children: [
+            SecondaryHeader(
+              title: "Confirm Order",
+              tableId: 'Table: $tableID',
+              time: DateTime.now().toString().substring(0, 16),
+              onPressedBackButton: () {
+                Navigator.pop(context, selectedMenusQuantity);
+              },
+            ),
+            MenuList(
+                showSelectedOnly: true,
+                selectedMenusQuantity: selectedMenusQuantity,
+                onUpdateSelectedMenusQuantity: _updateSelectedMenusQuantity)
+          ]),
+        ));
   }
 }

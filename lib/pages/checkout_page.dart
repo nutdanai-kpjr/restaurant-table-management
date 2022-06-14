@@ -1,9 +1,3 @@
-// Table Header
-// List of Checkout Summary
-// Divider
-// Total
-// Wide Button: Checkout
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:restaurant_table_management/components/headers/list_header.dart';
@@ -36,6 +30,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
   late final tableID = widget.tableID;
   String dropdownvalue = 'Cash';
   late OrderSummary orderSummary;
+  Member? member;
   @override
   void initState() {
     super.initState();
@@ -63,7 +58,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 ),
                 // textStyle:
                 onPressed: () async {
-                  await _showDialog(context);
+                  await _showMembershipDialog(context);
                   _refetch();
                 },
               ),
@@ -84,197 +79,46 @@ class _CheckOutPageState extends State<CheckOutPage> {
             ),
           ],
         ),
-        body: Column(children: [
-          SecondaryHeader(
-            title: "Checkout",
-            tableId: 'Table: ${widget.tableID}',
-            time: DateTime.now().toString().substring(0, 16),
-          ),
-          _buildCheckoutList(),
-        ]));
-  }
-
-  _showDialog(context) {
-    bool isRegister = false;
-    Member? member;
-    String phoneNumber = "";
-    TextEditingController _firstNameCtrl = TextEditingController();
-    TextEditingController _lastNameCtrl = TextEditingController();
-    TextEditingController _emailCtrl = TextEditingController();
-
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(
-              builder: (context, StateSetter setStateDialog) {
-            _onPhoneNumberChanged(value) async {
-              if (value.length == 10) {
-                var mem = await checkMembership(value, context: context);
-                //  if already a member
-                setStateDialog(() {
-                  if (mem != null) {
-                    member = mem;
-                    isRegister = false;
-                  } else {
-                    isRegister = true;
-                  }
-                  phoneNumber = value;
-                });
-                //  if not a member -> Set register = true;
-
-              } else if (value.length < 10 && member != null) {
-                setStateDialog(() {
-                  member = null;
-                  isRegister = false;
-                });
-              }
-            }
-
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0)), //this right here
-              child: _buildScrollableDialog(children: [
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 30),
-                  child: Text('Apply Membership',
-                      style: kHeaderTextStyle.copyWith(
-                          color: kPrimaryFontColor,
-                          fontSize: kAppTitle2FontSize)),
-                ),
-                const Text('Enter customer phone number',
-                    style: kPrimaryTextStyle),
-                _buildPhoneNumberTextField(onChanged: _onPhoneNumberChanged),
-                member == null
-                    ? PrimaryButton(
-                        text: isRegister
-                            ? 'Cancel Registeration'
-                            : 'Register new',
-                        onPressed: () {
-                          setStateDialog(() {
-                            isRegister = !isRegister;
-                          });
-                        },
-                      )
-                    : Text('${member?.tier}: ${member?.fullName}',
-                        style: kPrimaryTextStyle),
-                const SizedBox(height: 20),
-                isRegister
-                    ? Column(
-                        children: [
-                          const Divider(
-                            // height: MediaQuery.of(context).size.height * 0.075,
-                            color: kPrimaryFontColor,
-                            thickness: 1,
-                          ),
-                          _buildMemberInfoTextField(
-                              title: 'Firstname', textCtrl: _firstNameCtrl),
-                          _buildMemberInfoTextField(
-                              title: 'Lastname', textCtrl: _lastNameCtrl),
-                          _buildMemberInfoTextField(
-                              title: 'Email', textCtrl: _emailCtrl),
-                        ],
-                      )
-                    : Container(),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    PrimaryButton(
-                      color: kCancelledColor.withOpacity(0.5),
-                      text: 'Cancel',
-                      onPressed: () {
-                        Navigator.maybePop(context);
-                      },
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    PrimaryButton(
-                      color: kCompletedColor.withOpacity(0.5),
-                      text: isRegister ? 'Register' : 'Confirm',
-                      onPressed: () async {
-                        if (isRegister) {
-                          await addMember(
-                              Member(
-                                  phoneNumber: phoneNumber,
-                                  firstName: _firstNameCtrl.text,
-                                  lastName: _lastNameCtrl.text,
-                                  email: _emailCtrl.text),
-                              context: context);
-                          var mem = await checkMembership(phoneNumber,
-                              context: context);
-                          //  if already a member
-                          setStateDialog(() {
-                            if (mem != null) {
-                              member = mem;
-                              isRegister = false;
-                            } else {
-                              isRegister = true;
-                            }
-                          });
-
-                          //cra
-                        } else {
-                          Navigator.maybePop(context);
-
-                          setState(() {
-                            _getCheckoutList = getCheckOutOrdersWithMembership(
-                                tableID,
-                                phoneNumber: phoneNumber,
-                                orderSummary: orderSummary,
-                                context: context);
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.025)
-              ]),
-            );
-          });
-        });
-  }
-
-  SingleChildScrollView _buildScrollableDialog({required children}) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: children,
-        ),
-      ),
-    );
-  }
-
-  Padding _buildMemberInfoTextField({required title, textCtrl}) {
-    return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextField(
-          controller: textCtrl,
-          style: kPrimaryTextStyle,
-          keyboardType: TextInputType.text,
-          decoration: kTextFieldDecorationWithHintText(title),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.075),
+          child: Column(children: [
+            SecondaryHeader(
+              title: "Checkout",
+              tableId: 'Table: ${widget.tableID}',
+              time: DateTime.now().toString().substring(0, 16),
+            ),
+            _buildCheckoutList()
+          ]),
         ));
   }
 
-  Padding _buildPhoneNumberTextField({onChanged}) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: TextField(
-        onChanged: onChanged,
-        style: kPrimaryTextStyle,
-        keyboardType: TextInputType.number,
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-          LengthLimitingTextInputFormatter(10)
-        ],
-        decoration: kTextFieldDecorationWithHintText('0912345678'),
-      ),
-    );
+  _buildCheckoutList() {
+    return FutureBuilder(
+        future: _getCheckoutList,
+        builder: (context, AsyncSnapshot<OrderSummary> snapshot) {
+          if (snapshot.hasData) {
+            orderSummary = snapshot.data ?? OrderSummary.empty();
+            List<Order> checkoutOrderList = snapshot.data?.orderList ?? [];
+            double totalPrice = snapshot.data?.totalPrice ?? 0;
+            double discount = snapshot.data?.discount ?? 0;
+            double finalPrice = snapshot.data?.finalPrice ?? 0;
+
+            return Column(children: [
+              _buildOrderList(
+                list: checkoutOrderList,
+                title: 'Order Summary',
+              ),
+              _buildPaymentSelection(),
+              _buildTotalSummary(context,
+                  totalPrice: totalPrice,
+                  discount: discount,
+                  finalPrice: finalPrice)
+            ]);
+          } else {
+            return const Center(child: PrimaryCircularProgressIndicator());
+          }
+        });
   }
 
   _buildOrderList({
@@ -283,7 +127,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
   }) {
     return Container(
       margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
-      child: Column(children: [
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
         ListHeader(title: title),
         ListView.builder(
           shrinkWrap: true,
@@ -291,7 +135,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
           itemBuilder: (context, index) {
             var order = list[index];
             return PrimaryListItem(
+                height: 0.06,
                 isExapandable: true,
+                titleFlex: 7,
                 title: order.id,
                 subTitle: '',
                 rightSizeChildren: [
@@ -308,44 +154,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
         )
       ]),
     );
-  }
-
-  _buildCheckoutList() {
-    return FutureBuilder(
-        future: _getCheckoutList,
-        builder: (context, AsyncSnapshot<OrderSummary> snapshot) {
-          if (snapshot.hasData) {
-            orderSummary = snapshot.data ?? OrderSummary.empty();
-            List<Order> checkoutOrderList = snapshot.data?.orderList ?? [];
-            double totalPrice = snapshot.data?.totalPrice ?? 0;
-            double discount = snapshot.data?.discount ?? 0;
-            double finalPrice = snapshot.data?.finalPrice ?? 0;
-
-            return SingleChildScrollView(
-              child: Column(children: [
-                _buildOrderList(
-                  list: checkoutOrderList,
-                  title: 'Order Summary',
-                ),
-                _buildPaymentSelection(),
-                Container(
-                  margin: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.height * 0.015),
-                  child: const Divider(
-                    color: kPrimaryFontColor,
-                    thickness: 1,
-                  ),
-                ),
-                _buildTotalSummary(context,
-                    totalPrice: totalPrice,
-                    discount: discount,
-                    finalPrice: finalPrice),
-              ]),
-            );
-          } else {
-            return const Center(child: PrimaryCircularProgressIndicator());
-          }
-        });
   }
 
   _buildPaymentSelection() {
@@ -411,38 +219,44 @@ class _CheckOutPageState extends State<CheckOutPage> {
     return Container(
       margin: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height * 0.015,
-          horizontal: MediaQuery.of(context).size.width * 0.1),
+          horizontal: MediaQuery.of(context).size.width * 0.025),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Sub-Total',
                 textAlign: TextAlign.start,
                 overflow: TextOverflow.ellipsis,
-                style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
+                style: kPrimaryTextStyle,
               ),
               Text(
                 '฿ ${totalPrice.toStringAsFixed(1)}',
-                style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
+                style: kPrimaryTextStyle,
               ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Discount - ',
-                textAlign: TextAlign.start,
-                overflow: TextOverflow.ellipsis,
-                style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
-              ),
-              Text(
-                '฿ ${discount.toStringAsFixed(1)}',
-                style: kHeaderTextStyle.copyWith(fontSize: kAppTitle2FontSize),
-              ),
-            ],
+          member != null
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Discount - ${member?.tier ?? ''}',
+                      textAlign: TextAlign.start,
+                      overflow: TextOverflow.ellipsis,
+                      style: kPrimaryTextStyle.copyWith(color: kThemeColor),
+                    ),
+                    Text(
+                      '-฿ ${discount.toStringAsFixed(1)}',
+                      style: kPrimaryTextStyle.copyWith(color: kThemeColor),
+                    ),
+                  ],
+                )
+              : Container(),
+          const Divider(
+            color: kPrimaryFontColor,
+            thickness: 1,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -460,6 +274,205 @@ class _CheckOutPageState extends State<CheckOutPage> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  _showMembershipDialog(context) {
+    bool isRegister = false;
+
+    String phoneNumber = "";
+    TextEditingController firstNameCtrl = TextEditingController();
+    TextEditingController lastNameCtrl = TextEditingController();
+    TextEditingController emailCtrl = TextEditingController();
+    TextEditingController phoneCtrl = TextEditingController();
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (context, StateSetter setStateDialog) {
+            _onPhoneNumberChanged(value) async {
+              if (value.length == 10) {
+                var mem = await checkMembership(value, context: context);
+                //  if already a member
+                setStateDialog(() {
+                  if (mem != null) {
+                    member = mem;
+                    isRegister = false;
+                  } else {
+                    isRegister = true;
+                  }
+                  phoneNumber = value;
+                });
+                //  if not a member -> Set register = true;
+
+              } else if (value.length < 10 && member != null) {
+                setStateDialog(() {
+                  member = null;
+                  isRegister = false;
+                });
+              }
+            }
+
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0)), //this right here
+              child: _buildDialogScrollable(children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 30),
+                  child: Text('Apply Membership',
+                      style: kHeaderTextStyle.copyWith(
+                          color: kPrimaryFontColor,
+                          fontSize: kAppTitle2FontSize)),
+                ),
+                const Text('Enter customer phone number',
+                    style: kPrimaryTextStyle),
+                _buildDialogPhoneNumberTextField(
+                    onChanged: _onPhoneNumberChanged, textCtrl: phoneCtrl),
+                member == null
+                    ? PrimaryButton(
+                        text: isRegister
+                            ? 'Cancel Registeration'
+                            : 'Register new',
+                        onPressed: () {
+                          setStateDialog(() {
+                            isRegister = !isRegister;
+                          });
+                        },
+                      )
+                    : Column(
+                        children: [
+                          Text('${member?.tier}: ${member?.fullName}',
+                              style: kPrimaryTextStyle),
+                          PrimaryButton(
+                            text: 'Reset',
+                            onPressed: () {
+                              setStateDialog(() {
+                                phoneCtrl.clear();
+                                member = null;
+                              });
+                            },
+                          )
+                        ],
+                      ),
+                const SizedBox(height: 20),
+                isRegister
+                    ? Column(
+                        children: [
+                          const Divider(
+                            // height: MediaQuery.of(context).size.height * 0.075,
+                            color: kPrimaryFontColor,
+                            thickness: 1,
+                          ),
+                          _buildDialogMemberInfoTextField(
+                              title: 'Firstname', textCtrl: firstNameCtrl),
+                          _buildDialogMemberInfoTextField(
+                              title: 'Lastname', textCtrl: lastNameCtrl),
+                          _buildDialogMemberInfoTextField(
+                              title: 'Email', textCtrl: emailCtrl),
+                        ],
+                      )
+                    : Container(),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    PrimaryButton(
+                      color: kCancelledColor.withOpacity(0.5),
+                      text: 'Cancel',
+                      onPressed: () {
+                        Navigator.maybePop(context);
+                      },
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    PrimaryButton(
+                      color: kCompletedColor.withOpacity(0.5),
+                      text: isRegister ? 'Register' : 'Confirm',
+                      onPressed: () async {
+                        if (isRegister) {
+                          await addMember(
+                              Member(
+                                  phoneNumber: phoneNumber,
+                                  firstName: firstNameCtrl.text,
+                                  lastName: lastNameCtrl.text,
+                                  email: emailCtrl.text),
+                              context: context);
+                          var mem = await checkMembership(phoneNumber,
+                              context: context);
+                          //  if already a member
+                          setStateDialog(() {
+                            if (mem != null) {
+                              member = mem;
+                              isRegister = false;
+                            } else {
+                              isRegister = true;
+                            }
+                          });
+
+                          //cra
+                        } else {
+                          Navigator.maybePop(context);
+
+                          setState(() {
+                            _getCheckoutList = getCheckOutOrdersWithMembership(
+                                tableID,
+                                phoneNumber: phoneNumber,
+                                orderSummary: orderSummary,
+                                context: context);
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.025)
+              ]),
+            );
+          });
+        });
+  }
+
+  SingleChildScrollView _buildDialogScrollable({required children}) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: children,
+        ),
+      ),
+    );
+  }
+
+  Padding _buildDialogMemberInfoTextField({required title, textCtrl}) {
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextField(
+          controller: textCtrl,
+          style: kPrimaryTextStyle,
+          keyboardType: TextInputType.text,
+          decoration: kTextFieldDecorationWithHintText(title),
+        ));
+  }
+
+  Padding _buildDialogPhoneNumberTextField({onChanged, textCtrl}) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: TextField(
+        onChanged: onChanged,
+        style: kPrimaryTextStyle,
+        controller: textCtrl,
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+          LengthLimitingTextInputFormatter(10)
+        ],
+        decoration: kTextFieldDecorationWithHintText('0912345678'),
       ),
     );
   }

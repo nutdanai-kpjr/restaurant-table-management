@@ -79,17 +79,21 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 }
               : () {},
         ),
-        body: Column(children: [
-          SecondaryHeader(
-            title: "New Order",
-            tableId: 'Table:${widget.tableID}',
-            time: DateTime.now().toString().substring(0, 16),
-          ),
-          MenuList(
-            selectedMenusQuantity: selectedMenusQuantity,
-            onUpdateSelectedMenusQuantity: _updateSelectedMenusQuantity,
-          )
-        ]));
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.03),
+          child: Column(children: [
+            SecondaryHeader(
+              title: "New Order",
+              tableId: 'Table:${widget.tableID}',
+              time: DateTime.now().toString().substring(0, 16),
+            ),
+            MenuList(
+              selectedMenusQuantity: selectedMenusQuantity,
+              onUpdateSelectedMenusQuantity: _updateSelectedMenusQuantity,
+            )
+          ]),
+        ));
   }
 }
 
@@ -129,7 +133,8 @@ class _MenuListState extends State<MenuList> {
             var menuList = snapshot.data ?? [];
 
             return Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding:
+                  EdgeInsets.all(MediaQuery.of(context).size.width * 0.025),
               child: Column(children: [
                 const ListHeader(title: "Menu"),
                 ListView.builder(

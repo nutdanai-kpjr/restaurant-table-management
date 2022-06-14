@@ -33,6 +33,9 @@ class PrimaryListItem extends StatefulWidget {
       required this.rightSizeChildren,
       required this.indicatorColor,
       this.isExapandable = false,
+      this.height = 0.1,
+      this.titleFlex = 5,
+      this.rightSizechildrenFlex = 15,
       this.expandedChild})
       : super(key: key);
   final String subTitle;
@@ -41,7 +44,9 @@ class PrimaryListItem extends StatefulWidget {
   final Color indicatorColor;
   final bool isExapandable;
   final Widget? expandedChild;
-
+  final double height;
+  final int titleFlex;
+  final int rightSizechildrenFlex;
   @override
   State<PrimaryListItem> createState() => _PrimaryListItemState();
 }
@@ -72,8 +77,8 @@ class _PrimaryListItemState extends State<PrimaryListItem> {
         children: [
           Container(
               margin:
-                  EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
-              height: MediaQuery.of(context).size.height * 0.1,
+                  EdgeInsets.all(MediaQuery.of(context).size.height * 0.010),
+              height: MediaQuery.of(context).size.height * widget.height,
               decoration: BoxDecoration(
                 border: Border.all(color: kBorderColor, width: 2.0),
                 borderRadius: BorderRadius.circular(15.0),
@@ -94,7 +99,7 @@ class _PrimaryListItemState extends State<PrimaryListItem> {
                                   )),
                             )),
                         Expanded(
-                          flex: 5,
+                          flex: widget.titleFlex,
                           child: Column(
                             children: [
                               SizedBox(
@@ -120,7 +125,7 @@ class _PrimaryListItemState extends State<PrimaryListItem> {
                           ),
                         ),
                         Expanded(
-                          flex: 15,
+                          flex: widget.rightSizechildrenFlex,
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: newButtons),

@@ -39,7 +39,7 @@ class SecondaryListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
+        margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.0075),
         padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.0025),
         height: MediaQuery.of(context).size.height * 0.075,
         decoration: BoxDecoration(

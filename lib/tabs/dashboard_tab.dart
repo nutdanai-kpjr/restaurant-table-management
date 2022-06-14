@@ -14,11 +14,17 @@ class DashBoardTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
+      children: [
         Expanded(child: Text('Today, This Week ,This Month Buttonset')),
         Expanded(child: Text('Overview Section with 3 Block Section')),
         Expanded(child: Text('Most Popular Dishes Section ')),
         Expanded(child: Text('View Reports Section ')),
+        PrimaryButton(
+          text: 'Test',
+          onPressed: () async {
+            await getTableList(context: context);
+          },
+        ),
       ],
     );
   }
