@@ -9,8 +9,8 @@ import 'package:restaurant_table_management/domains/orderSummary.dart';
 import '../domains/menu.dart';
 import '../domains/table.dart' as domain;
 
-const String baseUrl = 'http://192.168.86.76:50001/restaurant';
-// const String baseUrl = 'http://10.0.2.2:50001/training-ws/'; // for emulator
+// const String baseUrl = 'http://192.168.86.76:50001/restaurant';
+const String baseUrl = 'http://10.0.2.2:50001/training-ws/'; // for emulator
 // http://localhost:50001/training-ws/
 const String restaurantBaseUrl = '$baseUrl/api/v1/restaurant';
 

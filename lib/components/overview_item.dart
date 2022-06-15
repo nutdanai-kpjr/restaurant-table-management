@@ -15,38 +15,30 @@ class OverviewItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
-      width: 100,
-      height: 100,
+      margin: EdgeInsets.symmetric(
+          vertical: MediaQuery.of(context).size.height * 0.015,
+          horizontal: MediaQuery.of(context).size.height * 0.0075),
+      width: MediaQuery.of(context).size.width * 0.25,
+      height: MediaQuery.of(context).size.width * 0.25,
       decoration: BoxDecoration(
         border: Border.all(color: indicatorColor.withOpacity(0.5), width: 2.0),
         borderRadius: BorderRadius.circular(15.0),
       ),
-      child: Column(children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.0125,
-        ),
-        Container(
-          margin: EdgeInsets.only(
-              left: MediaQuery.of(context).size.height * 0.0125),
-          width: double.infinity,
-          child: Text(
-            title,
-            style: kHeaderTextStyle,
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(
-              left: MediaQuery.of(context).size.height * 0.0125),
-          width: double.infinity,
-          child: Text(
-            label,
-            style: kPrimaryTextStyle.copyWith(
-              color: kSecondaryFontColor,
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: kHeaderTextStyle,
             ),
-          ),
-        )
-      ]),
+            Text(
+              label,
+              style: kPrimaryTextStyle.copyWith(
+                color: kSecondaryFontColor,
+              ),
+            )
+          ]),
     );
   }
 }

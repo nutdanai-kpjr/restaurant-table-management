@@ -36,80 +36,107 @@ class _DashBoardTabState extends State<DashBoardTab> {
     });
   }
 
+  _buildSectionWrapper({required title, required child}) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+          vertical: MediaQuery.of(context).size.height * 0.015,
+          horizontal: MediaQuery.of(context).size.width * 0.05),
+      child: Column(children: [
+        ListHeader(title: title),
+        child,
+      ]),
+    );
+  }
+
   _buildOverviewModeSelection() {
-    return ToggleButtons(
-      renderBorder: false,
-      fillColor: Colors.transparent,
-      selectedColor: kPrimaryFontColor,
-      splashColor: Colors.transparent,
-      onPressed: (int index) {
-        setState(() {
-          for (int buttonIndex = 0;
-              buttonIndex < overviewMode.length;
-              buttonIndex++) {
-            if (buttonIndex == index) {
-              overviewMode[buttonIndex] = true;
-            } else {
-              overviewMode[buttonIndex] = false;
+    return Container(
+      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),
+      child: ToggleButtons(
+        renderBorder: false,
+        fillColor: Colors.transparent,
+        selectedColor: kPrimaryFontColor,
+        splashColor: Colors.transparent,
+        onPressed: (int index) {
+          setState(() {
+            for (int buttonIndex = 0;
+                buttonIndex < overviewMode.length;
+                buttonIndex++) {
+              if (buttonIndex == index) {
+                overviewMode[buttonIndex] = true;
+              } else {
+                overviewMode[buttonIndex] = false;
+              }
             }
-          }
-        });
-      },
-      isSelected: overviewMode,
-      children: <Widget>[
-        PrimaryButton(
-          text: 'Today',
-          color: overviewMode[0] ? kCompletedColor : kBorderColor,
-        ),
-        PrimaryButton(
-          text: 'This Week',
-          color: overviewMode[1] ? kCompletedColor : kBorderColor,
-        ),
-        PrimaryButton(
-          text: 'This Month',
-          color: overviewMode[2] ? kCompletedColor : kBorderColor,
-        ),
-      ],
+          });
+        },
+        isSelected: overviewMode,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width * 0.03),
+            child: PrimaryButton(
+              text: 'Today',
+              color:
+                  overviewMode[0] ? kThemeColor.withOpacity(0.5) : kBorderColor,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width * 0.03),
+            child: PrimaryButton(
+              text: 'This Week',
+              color:
+                  overviewMode[1] ? kThemeColor.withOpacity(0.5) : kBorderColor,
+            ),
+          ),
+          PrimaryButton(
+            text: 'This Month',
+            color:
+                overviewMode[2] ? kThemeColor.withOpacity(0.5) : kBorderColor,
+          ),
+        ],
+      ),
     );
   }
 
   _buildOverviewSection() {
-    return Column(
-      children: [
-        ListHeader(title: 'Overview'),
-        Row(
+    return _buildSectionWrapper(
+        title: 'Overview',
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            OverviewItem(title: '10,000', label: 'Revenue'),
-            OverviewItem(title: '10,000', label: 'Revenue'),
-            OverviewItem(title: '10,000', label: 'Revenue'),
+            OverviewItem(title: '฿ ', label: 'Revenue'),
+            OverviewItem(title: '฿ ', label: 'Dishes'),
+            OverviewItem(title: '', label: 'Checkout'),
           ],
-        )
-      ],
-    );
+        ));
   }
 
   _buildPopularMenuSection() {
-    return Column(
-      children: [
-        ListHeader(title: 'Most Popular Menu'),
-        Column(
-          children: [
-            SecondaryListItem(
-              title: 'Revenue',
-              rightSideChildren: [Text('258 Dishes')],
-            ),
-            SecondaryListItem(
-              title: 'Revenue',
-              rightSideChildren: [Text('258 Dishes')],
-            ),
-            SecondaryListItem(
-              title: 'Revenue',
-              rightSideChildren: [Text('258 Dishes')],
-            ),
-          ],
-        ),
-      ],
+    return _buildSectionWrapper(
+      title: 'Most Popular Menu',
+      child: Column(
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+          SecondaryListItem(
+            title: 'Steak',
+            rightSideChildren: [Text('258 Dishes', style: kPrimaryTextStyle)],
+          ),
+          SecondaryListItem(
+            title: 'Hamburgur',
+            rightSideChildren: [Text('258 Dishes', style: kPrimaryTextStyle)],
+          ),
+          SecondaryListItem(
+            title: 'Pad Thai',
+            rightSideChildren: [
+              Text(
+                '258 Dishes',
+                style: kPrimaryTextStyle,
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -117,11 +144,13 @@ class _DashBoardTabState extends State<DashBoardTab> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Expanded(flex: 1, child: _buildOverviewModeSelection()),
-        Expanded(flex: 3, child: _buildOverviewSection()),
-        Expanded(flex: 3, child: _buildPopularMenuSection()),
+        Expanded(flex: 2, child: _buildOverviewModeSelection()),
+        Expanded(flex: 6, child: _buildOverviewSection()),
+        Expanded(flex: 11, child: _buildPopularMenuSection()),
         Expanded(
+          flex: 2,
           child: WideButton(
+            width: double.infinity,
             title: 'View Reports',
             onPressed: () async {
               // await getTableList(context: context);
