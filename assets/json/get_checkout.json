@@ -1,0 +1,29 @@
+{
+  "orderList": [
+    {
+      "orderID": "O000004",
+      "tableID": "T00",
+      "memberID": null,
+      "menuOrder": [
+        {
+          "menuID": "M003",
+          "name": "smooties",
+          "price": 100,
+          "menuStatus": "IN_STOCK"
+        }
+      ],
+      "orderPrice": 100,
+      "orderStatus": "COMPLETED",
+      "startTime": "2022-06-15T17:08:38.708807",
+      "updateTime": null,
+      "checkInTime": "2022-06-15T16:13:21.207819",
+      "checkOutTime": "2022-06-15T17:09:07.395653"
+    }
+  ],
+  "totalPrice": 0,
+  "discount": null,
+  "finalPrice": null,
+  "checkInTime": "2022-06-15T16:13:21.207819",
+  "checkOutTime": "2022-06-15T17:09:07.395662",
+  "paymentMethod": "CASH"
+}

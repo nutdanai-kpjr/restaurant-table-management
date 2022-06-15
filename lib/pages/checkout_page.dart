@@ -72,7 +72,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 title: 'Confirm',
                 onPressed: () {
                   print(paymentMethod.method);
-                  if (paymentMethod.isATM) {
+                  if (paymentMethod.isCreditCard) {
                   } else if (paymentMethod.isRabbitCard) {
                   } else {
                     confirmCheckout(widget.tableID, context: context)
@@ -208,7 +208,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
               },
             ),
           ),
-          if (paymentMethod.isATM)
+          if (paymentMethod.isCreditCard)
             _buildATMHandler()
 
           //show ATM Card Number Input and Confrim button then navaigate to enter pin page

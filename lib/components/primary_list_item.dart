@@ -61,7 +61,8 @@ class _PrimaryListItemState extends State<PrimaryListItem> {
               _isExpanded = !_isExpanded;
             });
           },
-          icon: Icon(!_isExpanded ? Icons.expand_more : Icons.expand_less)),
+          icon: Icon(!_isExpanded ? Icons.expand_more : Icons.expand_less,
+              color: kPrimaryFontColor)),
     ]);
   }
 

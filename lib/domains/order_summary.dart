@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:restaurant_table_management/domains/order.dart';
 
+//Available Paymentmethod CASH, RABBIT_CARD, CREDIT_CARD
 class OrderSummary {
   List<Order> orderList;
   double totalPrice;
@@ -9,12 +10,14 @@ class OrderSummary {
   double finalPrice;
   DateTime checkInTime;
   DateTime checkOutTime;
+  String paymentMethod;
   OrderSummary(
       {required this.orderList,
       required this.totalPrice,
       required this.finalPrice,
       required this.checkInTime,
       required this.checkOutTime,
+      this.paymentMethod = "CASH",
       this.discount = 0});
   factory OrderSummary.fromJson(Map<String, dynamic> parsedJson) {
     return OrderSummary(
@@ -23,6 +26,7 @@ class OrderSummary {
         finalPrice: parsedJson['finalPrice'] ?? 0,
         checkInTime: DateTime.parse(parsedJson['checkInTime']),
         checkOutTime: DateTime.parse(parsedJson['checkOutTime']),
+        paymentMethod: parsedJson['paymentMethod'] ?? "CASH",
         orderList: parsedJson['orderList']
             .map<Order>((e) => Order.fromJson(e))
             .toList());
@@ -33,7 +37,8 @@ class OrderSummary {
         finalPrice = 0,
         checkInTime = DateTime.now(),
         checkOutTime = DateTime.now(),
-        discount = 0;
+        discount = 0,
+        paymentMethod = "CASH";
 
   Map<String, dynamic> toJson() {
     return {
@@ -42,6 +47,7 @@ class OrderSummary {
       'finalPrice': finalPrice,
       'checkInTime': checkInTime.toIso8601String(),
       'checkOutTime': checkOutTime.toIso8601String(),
+      'paymentMethod': paymentMethod,
       'orderList': orderList,
     };
   }
