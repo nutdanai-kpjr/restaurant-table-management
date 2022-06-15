@@ -32,16 +32,13 @@ class OrderDetails extends StatelessWidget {
           borderRadius: BorderRadius.circular(15.0),
         ),
         margin: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.width * 0.01,
-            horizontal: MediaQuery.of(context).size.width * 0.04),
-        padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.width * 0.04,
-            horizontal: MediaQuery.of(context).size.width * 0.04),
+            vertical: kWidth(context) * 0.01,
+            horizontal: kWidth(context) * 0.04),
+        padding: EdgeInsets.all(kWidth(context) * 0.04),
         child: Column(children: [
           ..._buildEachmenu(menuNameandQuantityandPrice),
           Container(
-            margin:
-                EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.01),
+            margin: EdgeInsets.only(top: kWidth(context) * 0.01),
             width: double.infinity,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

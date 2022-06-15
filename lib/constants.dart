@@ -40,16 +40,20 @@ const TextStyle kSecondaryTextStyle = TextStyle(
 
 InputDecoration kTextFieldDecorationWithHintText(String hintText) =>
     InputDecoration(
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: kPrimaryFontColor),
-          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+        focusedBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: kThemeColor.withOpacity(0.5), width: 2.0),
+          borderRadius: const BorderRadius.all(Radius.circular(15.0)),
         ),
         enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(15.0)),
-          borderSide: BorderSide(color: kBorderColor),
+          borderSide: BorderSide(color: kBorderColor, width: 2.0),
         ),
         hintText: hintText,
         hintStyle: const TextStyle(
           // fontSize: kListItemSubTitleFontSize,
           color: kSecondaryFontColor,
         ));
+
+double kWidth(context) => MediaQuery.of(context).size.width;
+double kHeight(context) => MediaQuery.of(context).size.height;

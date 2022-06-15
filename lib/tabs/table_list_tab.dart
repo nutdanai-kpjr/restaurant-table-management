@@ -7,6 +7,7 @@ import 'package:restaurant_table_management/pages/create_order_page.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
 import '../components/primary_circular_progress_indicator.dart';
+import '../services/restaurant_service.dart';
 
 class TableListTab extends StatelessWidget {
   const TableListTab({Key? key}) : super(key: key);

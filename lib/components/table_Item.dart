@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_table_management/components/buttons/primary_button.dart';
 import 'package:restaurant_table_management/constants.dart';
+import 'package:restaurant_table_management/services/restaurant_service.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
 import '../pages/checkout_page.dart';
@@ -22,8 +23,8 @@ class TableItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
-        // height: MediaQuery.of(context).size.height * 0.2,
+        margin: EdgeInsets.all(kHeight(context) * 0.015),
+        // height: kHeight(context) * 0.2,
         decoration: BoxDecoration(
           border: Border.all(color: kBorderColor, width: 2.0),
           borderRadius: BorderRadius.circular(15.0),
@@ -47,11 +48,10 @@ class TableItem extends StatelessWidget {
                 children: [
                   Column(children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.0125,
+                      height: kHeight(context) * 0.0125,
                     ),
                     Container(
-                      margin: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.height * 0.0125),
+                      margin: EdgeInsets.only(left: kHeight(context) * 0.0125),
                       width: double.infinity,
                       child: Text(
                         title,
@@ -59,8 +59,7 @@ class TableItem extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.height * 0.0125),
+                      margin: EdgeInsets.only(left: kHeight(context) * 0.0125),
                       width: double.infinity,
                       child: Text(
                         status,
@@ -74,7 +73,7 @@ class TableItem extends StatelessWidget {
                     children: [
                       ...buttons,
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.0125,
+                        height: kHeight(context) * 0.0125,
                       ),
                     ],
                   )

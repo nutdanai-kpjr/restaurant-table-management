@@ -8,6 +8,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:restaurant_table_management/components/primary_scaffold.dart';
+import 'package:restaurant_table_management/constants.dart';
 import 'package:restaurant_table_management/pages/create_order_page.dart';
 import 'package:restaurant_table_management/pages/main_page.dart';
 import 'package:restaurant_table_management/services/service.dart';
@@ -15,6 +16,7 @@ import 'package:restaurant_table_management/services/service.dart';
 import '../components/buttons/wide_button.dart';
 import '../components/headers/secondary_header.dart';
 import '../domains/menu.dart';
+import '../services/restaurant_service.dart';
 
 class ConfirmOrderPage extends StatefulWidget {
   const ConfirmOrderPage(
@@ -65,8 +67,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
               // Add API request here
             }),
         body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.03),
+          padding: EdgeInsets.symmetric(horizontal: kWidth(context) * 0.03),
           child: Column(children: [
             SecondaryHeader(
               title: "Confirm Order",

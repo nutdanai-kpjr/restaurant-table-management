@@ -8,6 +8,7 @@ import 'package:restaurant_table_management/components/primary_list_item.dart';
 import 'package:restaurant_table_management/components/secondary_list_item.dart';
 import 'package:restaurant_table_management/constants.dart';
 import 'package:restaurant_table_management/domains/order.dart';
+import 'package:restaurant_table_management/services/restaurant_service.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
 import '../components/primary_circular_progress_indicator.dart';
@@ -39,8 +40,8 @@ class _DashBoardTabState extends State<DashBoardTab> {
   _buildSectionWrapper({required title, required child}) {
     return Container(
       margin: EdgeInsets.symmetric(
-          vertical: MediaQuery.of(context).size.height * 0.015,
-          horizontal: MediaQuery.of(context).size.width * 0.05),
+          vertical: kHeight(context) * 0.015,
+          horizontal: kWidth(context) * 0.05),
       child: Column(children: [
         ListHeader(title: title),
         child,
@@ -50,7 +51,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
 
   _buildOverviewModeSelection() {
     return Container(
-      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),
+      margin: EdgeInsets.only(top: kHeight(context) * 0.03),
       child: ToggleButtons(
         renderBorder: false,
         fillColor: Colors.transparent,
@@ -72,8 +73,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
         isSelected: overviewMode,
         children: <Widget>[
           Container(
-            margin: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.03),
+            margin: EdgeInsets.only(right: kWidth(context) * 0.03),
             child: PrimaryButton(
               text: 'Today',
               color:
@@ -81,8 +81,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.03),
+            margin: EdgeInsets.only(right: kWidth(context) * 0.03),
             child: PrimaryButton(
               text: 'This Week',
               color:
@@ -117,7 +116,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
       title: 'Most Popular Menu',
       child: Column(
         children: [
-          SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+          SizedBox(height: kHeight(context) * 0.015),
           SecondaryListItem(
             title: 'Steak',
             rightSideChildren: [Text('258 Dishes', style: kPrimaryTextStyle)],
@@ -151,7 +150,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
           flex: 2,
           child: WideButton(
             width: double.infinity,
-            title: 'View Reports',
+            title: 'Download CSV',
             onPressed: () async {
               // await getTableList(context: context);
             },
@@ -190,7 +189,7 @@ class _OrderListState extends State<OrderList> {
       required Color color,
       isUpdatable = false}) {
     return Container(
-      margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.025),
+      margin: EdgeInsets.all(kHeight(context) * 0.025),
       child: Column(children: [
         Container(
             width: double.infinity,
@@ -215,7 +214,7 @@ class _OrderListState extends State<OrderList> {
                           _refetch();
                         }),
                     SizedBox(
-                      width: MediaQuery.of(context).size.height * 0.008,
+                      width: kHeight(context) * 0.008,
                     ),
                     PrimaryButton(
                         color: kCancelledColor.withOpacity(0.5),

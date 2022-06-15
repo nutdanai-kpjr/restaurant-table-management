@@ -20,7 +20,7 @@ class WideButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.075,
+      height: kHeight(context) * 0.075,
       width: width,
       child: OutlinedButton(
           style: OutlinedButton.styleFrom(

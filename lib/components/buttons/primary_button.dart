@@ -110,7 +110,7 @@ class _MenuButtonState extends State<MenuButton> {
             style: kPrimaryTextStyle,
           ),
           SizedBox(
-            width: MediaQuery.of(context).size.height * 0.025,
+            width: kHeight(context) * 0.025,
           ),
           PrimaryButton(
             color: kInprogressColor.withOpacity(0.5),

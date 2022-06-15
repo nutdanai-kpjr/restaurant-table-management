@@ -19,6 +19,7 @@ import 'package:restaurant_table_management/pages/confirm_order_page.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
 import '../components/primary_circular_progress_indicator.dart';
+import '../services/restaurant_service.dart';
 
 /// // On Add Item (Display Edit Quantity Mode in Menuitem))
 // // On Edit Item (Display Edit Quantity Mode in Menuitem))
@@ -80,8 +81,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               : () {},
         ),
         body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.03),
+          padding: EdgeInsets.symmetric(horizontal: kWidth(context) * 0.03),
           child: Column(children: [
             SecondaryHeader(
               title: "New Order",
@@ -133,8 +133,7 @@ class _MenuListState extends State<MenuList> {
             var menuList = snapshot.data ?? [];
 
             return Padding(
-              padding:
-                  EdgeInsets.all(MediaQuery.of(context).size.width * 0.025),
+              padding: EdgeInsets.all(kWidth(context) * 0.025),
               child: Column(children: [
                 const ListHeader(title: "Menu"),
                 ListView.builder(

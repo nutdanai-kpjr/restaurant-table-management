@@ -4,6 +4,7 @@ import 'package:restaurant_table_management/components/order_detail.dart';
 import 'package:restaurant_table_management/components/primary_list_item.dart';
 import 'package:restaurant_table_management/constants.dart';
 import 'package:restaurant_table_management/domains/order.dart';
+import 'package:restaurant_table_management/services/restaurant_service.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
 import '../components/primary_circular_progress_indicator.dart';
@@ -47,7 +48,7 @@ class _OrderListState extends State<OrderList> {
       required Color color,
       isUpdatable = false}) {
     return Container(
-      margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.03),
+      margin: EdgeInsets.all(kHeight(context) * 0.03),
       child: Column(children: [
         Container(
             width: double.infinity,
@@ -73,7 +74,7 @@ class _OrderListState extends State<OrderList> {
                           _refetch();
                         }),
                     SizedBox(
-                      width: MediaQuery.of(context).size.height * 0.008,
+                      width: kHeight(context) * 0.008,
                     ),
                     PrimaryButton(
                         color: kCancelledColor.withOpacity(0.5),

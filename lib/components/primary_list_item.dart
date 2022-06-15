@@ -76,9 +76,8 @@ class _PrimaryListItemState extends State<PrimaryListItem> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-              margin:
-                  EdgeInsets.all(MediaQuery.of(context).size.height * 0.010),
-              height: MediaQuery.of(context).size.height * widget.height,
+              margin: EdgeInsets.all(kHeight(context) * 0.010),
+              height: kHeight(context) * widget.height,
               decoration: BoxDecoration(
                 border: Border.all(color: kBorderColor, width: 2.0),
                 borderRadius: BorderRadius.circular(15.0),
@@ -103,21 +102,18 @@ class _PrimaryListItemState extends State<PrimaryListItem> {
                           child: Column(
                             children: [
                               SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.01,
+                                height: kHeight(context) * 0.01,
                               ),
                               Container(
                                   margin: EdgeInsets.only(
-                                      left: MediaQuery.of(context).size.height *
-                                          0.0125),
+                                      left: kHeight(context) * 0.0125),
                                   width: double.infinity,
                                   child: Text(widget.title,
                                       style: kPrimaryTextStyle.copyWith(
                                           fontSize: kHeaderFontSize))),
                               Container(
                                   margin: EdgeInsets.only(
-                                      left: MediaQuery.of(context).size.height *
-                                          0.0125),
+                                      left: kHeight(context) * 0.0125),
                                   width: double.infinity,
                                   child: Text(widget.subTitle,
                                       style: kSecondaryTextStyle)),

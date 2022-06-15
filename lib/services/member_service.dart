@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:restaurant_table_management/domains/orderSummary.dart';
+import 'package:restaurant_table_management/domains/order_summary.dart';
 import 'package:restaurant_table_management/services/service.dart';
 import 'package:http/http.dart' as http;
 import '../domains/member.dart';

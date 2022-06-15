@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:restaurant_table_management/components/headers/list_header.dart';
+import 'package:restaurant_table_management/components/primary_textfield.dart';
+import 'package:restaurant_table_management/domains/payment_method.dart';
 import 'package:restaurant_table_management/pages/main_page.dart';
+import 'package:restaurant_table_management/services/restaurant_service.dart';
 
 import '../components/buttons/primary_button.dart';
 import '../components/buttons/wide_button.dart';
@@ -13,9 +16,8 @@ import '../components/primary_scaffold.dart';
 import '../constants.dart';
 import '../domains/member.dart';
 import '../domains/order.dart';
-import '../domains/orderSummary.dart';
+import '../domains/order_summary.dart';
 import '../services/member_service.dart';
-import '../services/service.dart';
 
 class CheckOutPage extends StatefulWidget {
   const CheckOutPage({Key? key, required this.tableID}) : super(key: key);
@@ -28,9 +30,11 @@ class CheckOutPage extends StatefulWidget {
 class _CheckOutPageState extends State<CheckOutPage> {
   late Future<OrderSummary> _getCheckoutList;
   late final tableID = widget.tableID;
-  String dropdownvalue = 'Cash';
   late OrderSummary orderSummary;
   Member? member;
+  PaymentMethod paymentMethod = PaymentMethod();
+  TextEditingController cardNumberCtrl = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -67,21 +71,25 @@ class _CheckOutPageState extends State<CheckOutPage> {
               child: WideButton(
                 title: 'Confirm',
                 onPressed: () {
-                  confirmCheckout(widget.tableID, context: context)
-                      .then((value) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MainPage()));
-                  });
+                  print(paymentMethod.method);
+                  if (paymentMethod.isATM) {
+                  } else if (paymentMethod.isRabbitCard) {
+                  } else {
+                    confirmCheckout(widget.tableID, context: context)
+                        .then((value) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MainPage()));
+                    });
+                  }
                 },
               ),
             ),
           ],
         ),
         body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.075),
+          padding: EdgeInsets.symmetric(horizontal: kWidth(context) * 0.075),
           child: Column(children: [
             SecondaryHeader(
               title: "Checkout",
@@ -126,7 +134,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
     required String title,
   }) {
     return Container(
-      margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
+      margin: EdgeInsets.all(kHeight(context) * 0.015),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         ListHeader(title: title),
         ListView.builder(
@@ -158,34 +166,30 @@ class _CheckOutPageState extends State<CheckOutPage> {
 
   _buildPaymentSelection() {
     // List of items in our dropdown menu
-    var items = [
-      'Cash',
-      'Rabbit Pay',
-      'ATM',
-    ];
+
     return Container(
-      margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.015),
+      margin: EdgeInsets.all(kHeight(context) * 0.015),
       child: Column(
         children: [
           const ListHeader(title: 'Payment Method'),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+          SizedBox(height: kHeight(context) * 0.015),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             decoration: BoxDecoration(
                 border: Border.all(color: kBorderColor, width: 2.0),
                 borderRadius: BorderRadius.circular(15)),
-            width: MediaQuery.of(context).size.width * 0.8,
+            width: kWidth(context) * 0.8,
             child: DropdownButton(
               underline: Container(),
               isExpanded: true,
               // Initial Value
-              value: dropdownvalue,
+              value: paymentMethod.method,
 
               // Down Arrow Icon
               icon: const Icon(Icons.keyboard_arrow_down),
 
               // Array list of items
-              items: items.map((String items) {
+              items: paymentMethod.methodOptionsList.map((String items) {
                 return DropdownMenuItem(
                   value: items,
                   child: Text(
@@ -198,18 +202,78 @@ class _CheckOutPageState extends State<CheckOutPage> {
               // change button value to selected value
               onChanged: (String? newValue) {
                 setState(() {
-                  dropdownvalue = newValue!;
+                  paymentMethod.method = newValue ?? 'Cash';
+                  print(paymentMethod.isRabbitCard);
                 });
               },
             ),
           ),
-          if (dropdownvalue == 'ATM')
-            Text('ATM Handler')
-          else if (dropdownvalue == 'Rabbit Pay')
-            Text('Rabbit Pay Handler')
+          if (paymentMethod.isATM)
+            _buildATMHandler()
+
+          //show ATM Card Number Input and Confrim button then navaigate to enter pin page
+
+          else if (paymentMethod.isRabbitCard)
+            _buildRabbitCardHandler()
         ],
       ),
     );
+  }
+
+  Widget _buildATMHandler() {
+    return Column(children: [
+      PrimaryTextfield(
+        padding: EdgeInsets.symmetric(
+            horizontal: kWidth(context) * 0.04,
+            vertical: kHeight(context) * 0.025),
+        title: 'Enter Card Number',
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+          LengthLimitingTextInputFormatter(12)
+        ],
+        keyboardType: TextInputType.number,
+      ),
+      PrimaryTextfield(
+        padding: EdgeInsets.symmetric(
+          horizontal: kWidth(context) * 0.04,
+        ),
+        title: 'Enter PIN password',
+        obscureText: true,
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+          LengthLimitingTextInputFormatter(4)
+        ],
+        keyboardType: TextInputType.number,
+      ),
+    ]);
+  }
+
+  Widget _buildRabbitCardHandler() {
+    return Column(children: [
+      PrimaryTextfield(
+        padding: EdgeInsets.symmetric(
+            horizontal: kWidth(context) * 0.04,
+            vertical: kHeight(context) * 0.025),
+        title: 'Enter Rabbit Card ID',
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+          LengthLimitingTextInputFormatter(12)
+        ],
+        keyboardType: TextInputType.number,
+      ),
+      PrimaryTextfield(
+        padding: EdgeInsets.symmetric(
+          horizontal: kWidth(context) * 0.04,
+        ),
+        title: 'Enter PIN password',
+        obscureText: true,
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+          LengthLimitingTextInputFormatter(4)
+        ],
+        keyboardType: TextInputType.number,
+      ),
+    ]);
   }
 
   _buildTotalSummary(BuildContext context,
@@ -218,8 +282,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
       required double finalPrice}) {
     return Container(
       margin: EdgeInsets.symmetric(
-          vertical: MediaQuery.of(context).size.height * 0.015,
-          horizontal: MediaQuery.of(context).size.width * 0.025),
+          vertical: kHeight(context) * 0.015,
+          horizontal: kWidth(context) * 0.025),
       child: Column(
         children: [
           Row(
@@ -328,8 +392,16 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 ),
                 const Text('Enter customer phone number',
                     style: kPrimaryTextStyle),
-                _buildDialogPhoneNumberTextField(
-                    onChanged: _onPhoneNumberChanged, textCtrl: phoneCtrl),
+                PrimaryTextfield(
+                    title: 'Phone Number',
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      LengthLimitingTextInputFormatter(10)
+                    ],
+                    padding: const EdgeInsets.all(16.0),
+                    controller: phoneCtrl,
+                    onChanged: _onPhoneNumberChanged),
                 member == null
                     ? PrimaryButton(
                         text: isRegister
@@ -361,16 +433,22 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     ? Column(
                         children: [
                           const Divider(
-                            // height: MediaQuery.of(context).size.height * 0.075,
+                            // height: kHeight(context) * 0.075,
                             color: kPrimaryFontColor,
                             thickness: 1,
                           ),
-                          _buildDialogMemberInfoTextField(
-                              title: 'Firstname', textCtrl: firstNameCtrl),
-                          _buildDialogMemberInfoTextField(
-                              title: 'Lastname', textCtrl: lastNameCtrl),
-                          _buildDialogMemberInfoTextField(
-                              title: 'Email', textCtrl: emailCtrl),
+                          PrimaryTextfield(
+                            title: 'First Name',
+                            controller: firstNameCtrl,
+                          ),
+                          PrimaryTextfield(
+                            title: 'Last Name',
+                            controller: lastNameCtrl,
+                          ),
+                          PrimaryTextfield(
+                            title: 'Email',
+                            controller: emailCtrl,
+                          ),
                         ],
                       )
                     : Container(),
@@ -428,7 +506,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     ),
                   ],
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.025)
+                SizedBox(height: kHeight(context) * 0.025)
               ]),
             );
           });
@@ -445,34 +523,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: children,
         ),
-      ),
-    );
-  }
-
-  Padding _buildDialogMemberInfoTextField({required title, textCtrl}) {
-    return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextField(
-          controller: textCtrl,
-          style: kPrimaryTextStyle,
-          keyboardType: TextInputType.text,
-          decoration: kTextFieldDecorationWithHintText(title),
-        ));
-  }
-
-  Padding _buildDialogPhoneNumberTextField({onChanged, textCtrl}) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: TextField(
-        onChanged: onChanged,
-        style: kPrimaryTextStyle,
-        controller: textCtrl,
-        keyboardType: TextInputType.number,
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-          LengthLimitingTextInputFormatter(10)
-        ],
-        decoration: kTextFieldDecorationWithHintText('0912345678'),
       ),
     );
   }

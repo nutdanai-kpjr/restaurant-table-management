@@ -1,0 +1,34 @@
+{
+  "revenue": 1000,
+  "dishes": 100,
+  "checkouts": 50,
+  "popularMenu": [
+    {
+      "menu": {
+        "menuID": "M004",
+        "name": "Kao Pad",
+        "price": 60
+      },
+      "totalSales": 100,
+      "rank": 1
+    },
+    {
+      "menu": {
+        "menuID": "M004",
+        "name": "Kao Pad",
+        "price": 60
+      },
+      "totalSales": 100,
+      "rank": 2
+    },
+    {
+      "menu": {
+        "menuID": "M004",
+        "name": "Kao Pad",
+        "price": 60
+      },
+      "totalSales": 100,
+      "rank": 3
+    }
+  ]
+}

@@ -39,9 +39,9 @@ class SecondaryListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.0075),
-        padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.0025),
-        height: MediaQuery.of(context).size.height * 0.075,
+        margin: EdgeInsets.all(kHeight(context) * 0.0075),
+        padding: EdgeInsets.all(kHeight(context) * 0.0025),
+        height: kHeight(context) * 0.075,
         decoration: BoxDecoration(
           border: Border.all(
               color: !isDisabled ? kBorderColor : kBorderColor.withOpacity(0.5),
@@ -53,8 +53,7 @@ class SecondaryListItem extends StatelessWidget {
             Expanded(
               flex: 1,
               child: Container(
-                margin: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.height * 0.015),
+                margin: EdgeInsets.only(left: kHeight(context) * 0.015),
                 child: Text(
                   title,
                   style: !isDisabled
