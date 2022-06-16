@@ -2,20 +2,20 @@ const String shopAccountNumber = "aa";
 
 class ATMTransaction {
   final String atmId;
-  final String atmPass;
-  final String receiverAccountNumber;
+  final String atmPin;
+  final String toAccountNumber;
   final double amount;
 
   ATMTransaction(
       {required this.atmId,
-      required this.atmPass,
-      this.receiverAccountNumber = shopAccountNumber,
+      required this.atmPin,
+      this.toAccountNumber = shopAccountNumber,
       required this.amount});
 
   Map<String, dynamic> toJson() => {
         'atmId': atmId,
-        'rabbitPass': atmPass,
+        'pin': atmPin,
         'amount': amount,
-        'shopAccountNumber': shopAccountNumber,
+        'toAccountNumber': shopAccountNumber,
       };
 }

@@ -1,17 +1,24 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:restaurant_table_management/components/buttons/primary_button.dart';
+import 'package:http/http.dart' as http;
+import 'package:restaurant_table_management/domains/atm_transaction.dart';
 import 'package:restaurant_table_management/domains/order.dart';
 import 'package:restaurant_table_management/domains/order_summary.dart';
+import 'package:restaurant_table_management/domains/payment_method.dart';
+import 'package:restaurant_table_management/domains/rabbit_transaction.dart';
+import 'package:restaurant_table_management/services/bank_service.dart';
+import 'package:restaurant_table_management/services/internal_restaurant_service.dart';
+import 'package:restaurant_table_management/services/rabbit_card_service.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
 import '../domains/menu.dart';
 import '../domains/table.dart' as domain;
 
+const String restaurantBaseUrl = '$baseUrl/api/v1/restaurant';
+
 Future<List<domain.Table>> getTableList({required context}) async {
-  final response = await get(Uri.parse('$restaurantBaseUrl/listTable'));
+  final response = await http.get(Uri.parse('$restaurantBaseUrl/listTable'));
   // final response = await rootBundle.loadString('assets/json/get_tables.json');
 
   if (response.statusCode == 200) {
@@ -25,12 +32,12 @@ Future<List<domain.Table>> getTableList({required context}) async {
   } else {
     var body = jsonDecode(response.body);
     await showErrorDialog(context, body);
-    throw Exception('Failed to get table post');
+    throw Exception('Failed to get table http.post');
   }
 }
 
 Future<List<Menu>> getMenus({required context}) async {
-  final response = await get(Uri.parse('$restaurantBaseUrl/listMenu'));
+  final response = await http.get(Uri.parse('$restaurantBaseUrl/listMenu'));
   // final response = await rootBundle.loadString('assets/json/get_menu.json');
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -44,33 +51,12 @@ Future<List<Menu>> getMenus({required context}) async {
     await showErrorDialog(context, body);
     // If the server did not return a 200 OK response,
     // then throw an exception.
-    throw Exception('Failed to load post');
-  }
-}
-
-Future<List<Order>> getOrderHistory({required context}) async {
-  final response = await get(Uri.parse('$internalBaseUrl/getHistory'));
-
-// final response = await rootBundle.loadString('assets/json/get_menu.json');
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    var parsedJson = jsonDecode(response.body);
-    List<Order> results = parsedJson
-        .map<Order>((order) => Order.fromJson(order, isHistory: true))
-        .toList();
-    return results;
-  } else {
-    var body = jsonDecode(response.body);
-    await showErrorDialog(context, body);
-    return [];
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-
+    throw Exception('Failed to load http.post');
   }
 }
 
 Future<Map<String, List<Order>>> getOrders({required context}) async {
-  final response = await get(Uri.parse('$restaurantBaseUrl/listOrder'));
+  final response = await http.get(Uri.parse('$restaurantBaseUrl/listOrder'));
   // final response = await rootBundle.loadString('assets/json/get_menu.json');
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -102,7 +88,7 @@ Future<Map<String, List<Order>>> getOrders({required context}) async {
 
 Future<OrderSummary> getCheckoutOrders(String tableID,
     {required context}) async {
-  final response = await post(Uri.parse(
+  final response = await http.post(Uri.parse(
     '$restaurantBaseUrl/checkOut?tableID=$tableID',
   ));
 
@@ -130,7 +116,7 @@ Future<OrderSummary> getCheckOutOrdersWithMembership(String tableID,
     "phoneNumber": phoneNumber,
     "tableID": tableID
   });
-  final response = await post(
+  final response = await http.post(
       Uri.parse(
         '$restaurantBaseUrl/checkOutMember',
       ),
@@ -152,7 +138,7 @@ Future<OrderSummary> getCheckOutOrdersWithMembership(String tableID,
 }
 
 Future<bool> confirmCheckout(String tableID, {required context}) async {
-  final response = await post(Uri.parse(
+  final response = await http.post(Uri.parse(
     '$restaurantBaseUrl/exit?tableID=$tableID',
   ));
   // final response = await rootBundle.loadString('assets/json/get_orders.json');
@@ -169,7 +155,7 @@ Future<bool> confirmCheckout(String tableID, {required context}) async {
 }
 
 Future<bool> checkInTable(String tableID, {required context}) async {
-  final response = await post(Uri.parse(
+  final response = await http.post(Uri.parse(
     '$restaurantBaseUrl/checkIn?tableID=$tableID',
   ));
 
@@ -185,7 +171,7 @@ Future<bool> checkInTable(String tableID, {required context}) async {
 
 Future<bool> _updateOrder(String orderID, String status,
     {required context}) async {
-  final response = await post(Uri.parse(
+  final response = await http.post(Uri.parse(
     '$restaurantBaseUrl/UpdateOrder?orderID=$orderID&orderStatus=$status',
   ));
 
@@ -218,7 +204,7 @@ Future<bool> createOrder(String tableID, List<String> menuIdList,
 
   var body = json.encode(mapBody);
 
-  final response = await post(
+  final response = await http.post(
       Uri.parse(
         '$restaurantBaseUrl/order',
       ),
@@ -239,6 +225,49 @@ Future<bool> createOrder(String tableID, List<String> menuIdList,
   }
 }
 
-// Future<bool> updateChekoutPaymentmethod(){
+Future<OrderSummary> updateCheckoutPaymentMethodAndGetOrderSummary(
+    {required context,
+    required String newPaymentMethod,
+    required OrderSummary orderSummary}) async {
+  final requestBody =
+      json.encode({"wrapper": orderSummary, "payment": newPaymentMethod});
 
-// }
+  final response = await http.post(
+      Uri.parse(
+        '$restaurantBaseUrl/updatePaymentMethod',
+      ),
+      headers: {"Content-Type": "application/json"},
+      body: requestBody);
+
+  // final response = await rootBundle.loadString('assets/json/get_orders.json');
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    var parsedJson = jsonDecode(response.body);
+    OrderSummary result = OrderSummary.fromJson(parsedJson);
+
+    return result;
+  } else {
+    var body = jsonDecode(response.body);
+    await showErrorDialog(context, body);
+    Navigator.maybePop(context);
+    return OrderSummary.empty();
+  }
+}
+
+Future<bool> confirmCheckoutWithRabbitCard(String tableID,
+    {required context, required RabbitTransaction rabbitTransaction}) async {
+  if (await payWithRabbitCard(rabbitTransaction, context: context)) {
+    return await confirmCheckout(tableID, context: context);
+  } else {
+    return false;
+  }
+}
+
+Future<bool> confirmCheckoutWithATMCard(String tableID,
+    {required context, required ATMTransaction atmTransaction}) async {
+  if (await payWithATMCard(atmTransaction, context: context)) {
+    return await confirmCheckout(tableID, context: context);
+  } else {
+    return false;
+  }
+}

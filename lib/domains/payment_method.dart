@@ -10,12 +10,17 @@ class PaymentMethod {
     'Rabbit Card',
     'Credit Card',
   ];
+  static const List<String> methodCodeOptions = [
+    'CASH',
+    'RABBIT_CARD',
+    'CREDIT_CARD',
+  ];
   bool get isCash => method == "Cash";
   bool get isCreditCard => method == "Credit Card";
   bool get isRabbitCard => method == "Rabbit Card";
   List<String> get methodOptionsList => methodOptions;
-
-  String get methodCode {
+  List<String> get methodCodeOptionsList => methodCodeOptions;
+  String get toMethodCode {
     switch (method) {
       case "Cash":
         return "CASH";
@@ -25,6 +30,23 @@ class PaymentMethod {
         return "CREDIT_CARD";
       default:
         return "CASH";
+    }
+  }
+
+  set fromMethodCode(String methodCode) {
+    switch (methodCode) {
+      case "CASH":
+        method = "Cash";
+        break;
+      case "RABBIT_CARD":
+        method = "Rabbit Card";
+        break;
+      case "CREDIT_CARD":
+        method = "Credit Card";
+        break;
+      default:
+        method = "Cash";
+        break;
     }
   }
 }

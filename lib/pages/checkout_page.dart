@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:restaurant_table_management/components/headers/list_header.dart';
 import 'package:restaurant_table_management/components/primary_textfield.dart';
+import 'package:restaurant_table_management/domains/atm_transaction.dart';
 import 'package:restaurant_table_management/domains/payment_method.dart';
+import 'package:restaurant_table_management/domains/rabbit_transaction.dart';
 import 'package:restaurant_table_management/pages/main_page.dart';
 import 'package:restaurant_table_management/services/restaurant_service.dart';
 
@@ -32,8 +34,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
   late final tableID = widget.tableID;
   late OrderSummary orderSummary;
   Member? member;
+  late RabbitTransaction rabbitTransaction;
+  late ATMTransaction atmTransaction;
+
   PaymentMethod paymentMethod = PaymentMethod();
-  TextEditingController cardNumberCtrl = TextEditingController();
+  TextEditingController atmCardCtrl = TextEditingController();
+  TextEditingController atmPinCtrl = TextEditingController();
+  TextEditingController rabbitCardCtrl = TextEditingController();
+  TextEditingController rabbitPinCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -50,6 +58,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
   @override
   Widget build(BuildContext context) {
     return PrimaryScaffold(
+        resizeToAvoidBottomInset: true,
         bottomNavigationBar: Row(
           children: [
             Expanded(
@@ -73,7 +82,21 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 onPressed: () {
                   print(paymentMethod.method);
                   if (paymentMethod.isCreditCard) {
+                    atmTransaction = ATMTransaction(
+                      atmId: atmCardCtrl.text,
+                      atmPin: atmPinCtrl.text,
+                      amount: orderSummary.finalPrice,
+                    );
+                    confirmCheckoutWithATMCard(tableID,
+                        context: context, atmTransaction: atmTransaction);
                   } else if (paymentMethod.isRabbitCard) {
+                    rabbitTransaction = RabbitTransaction(
+                      rabbitID: rabbitCardCtrl.text,
+                      rabbitPass: rabbitPinCtrl.text,
+                      amount: orderSummary.finalPrice,
+                    );
+                    confirmCheckoutWithRabbitCard(tableID,
+                        context: context, rabbitTransaction: rabbitTransaction);
                   } else {
                     confirmCheckout(widget.tableID, context: context)
                         .then((value) {
@@ -107,6 +130,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
         builder: (context, AsyncSnapshot<OrderSummary> snapshot) {
           if (snapshot.hasData) {
             orderSummary = snapshot.data ?? OrderSummary.empty();
+            paymentMethod.fromMethodCode = orderSummary.paymentMethod;
             List<Order> checkoutOrderList = snapshot.data?.orderList ?? [];
             double totalPrice = snapshot.data?.totalPrice ?? 0;
             double discount = snapshot.data?.discount ?? 0;
@@ -200,10 +224,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
               }).toList(),
               // After selecting the desired option,it will
               // change button value to selected value
-              onChanged: (String? newValue) {
+              onChanged: (String? newValue) async {
+                paymentMethod.method = newValue ?? "CASH";
                 setState(() {
-                  paymentMethod.method = newValue ?? 'Cash';
-                  print(paymentMethod.isRabbitCard);
+                  _getCheckoutList =
+                      updateCheckoutPaymentMethodAndGetOrderSummary(
+                          orderSummary: orderSummary,
+                          newPaymentMethod: paymentMethod.toMethodCode,
+                          context: context);
                 });
               },
             ),
@@ -223,6 +251,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
   Widget _buildATMHandler() {
     return Column(children: [
       PrimaryTextfield(
+        controller: atmCardCtrl,
         padding: EdgeInsets.symmetric(
             horizontal: kWidth(context) * 0.04,
             vertical: kHeight(context) * 0.025),
@@ -234,14 +263,15 @@ class _CheckOutPageState extends State<CheckOutPage> {
         keyboardType: TextInputType.number,
       ),
       PrimaryTextfield(
+        controller: atmPinCtrl,
         padding: EdgeInsets.symmetric(
           horizontal: kWidth(context) * 0.04,
         ),
-        title: 'Enter PIN password',
+        title: 'Enter PIN password (6 digits)',
         obscureText: true,
         inputFormatters: [
           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-          LengthLimitingTextInputFormatter(4)
+          LengthLimitingTextInputFormatter(6)
         ],
         keyboardType: TextInputType.number,
       ),
@@ -251,6 +281,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
   Widget _buildRabbitCardHandler() {
     return Column(children: [
       PrimaryTextfield(
+        controller: rabbitCardCtrl,
         padding: EdgeInsets.symmetric(
             horizontal: kWidth(context) * 0.04,
             vertical: kHeight(context) * 0.025),
@@ -262,10 +293,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
         keyboardType: TextInputType.number,
       ),
       PrimaryTextfield(
+        controller: rabbitPinCtrl,
         padding: EdgeInsets.symmetric(
           horizontal: kWidth(context) * 0.04,
         ),
-        title: 'Enter PIN password',
+        title: 'Enter PIN password (4 digits)',
         obscureText: true,
         inputFormatters: [
           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),

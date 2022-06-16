@@ -13,9 +13,8 @@ Future<bool> payWithRabbitCard(RabbitTransaction rabbitTransaction,
     {required context}) async {
   final response = await http.post(Uri.parse('$rabbitControllerUrl/rabbitPay'),
       headers: {"Content-Type": "application/json"},
-      body: json.encode(rabbitTransaction.toJson()));
+      body: json.encode(rabbitTransaction));
 
-  print(response);
   if (response.statusCode == 200) {
     return true;
   } else {

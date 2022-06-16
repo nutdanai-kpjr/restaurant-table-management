@@ -23,7 +23,7 @@ class OrderSummary {
     return OrderSummary(
         discount: parsedJson['discount'] ?? 0,
         totalPrice: parsedJson['totalPrice'] ?? 0,
-        finalPrice: parsedJson['finalPrice'] ?? 0,
+        finalPrice: parsedJson['finalPrice'] ?? parsedJson['totalPrice'] ?? 0,
         checkInTime: DateTime.parse(parsedJson['checkInTime']),
         checkOutTime: DateTime.parse(parsedJson['checkOutTime']),
         paymentMethod: parsedJson['paymentMethod'] ?? "CASH",
