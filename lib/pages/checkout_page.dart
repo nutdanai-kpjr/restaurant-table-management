@@ -88,7 +88,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                       amount: orderSummary.finalPrice,
                     );
                     confirmCheckoutWithATMCard(tableID,
-                        context: context, atmTransaction: atmTransaction);
+                        context: context,
+                        atmTransaction: atmTransaction,
+                        paymentMethod: orderSummary.paymentMethod);
                   } else if (paymentMethod.isRabbitCard) {
                     rabbitTransaction = RabbitTransaction(
                       rabbitID: rabbitCardCtrl.text,
@@ -96,9 +98,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                       amount: orderSummary.finalPrice,
                     );
                     confirmCheckoutWithRabbitCard(tableID,
-                        context: context, rabbitTransaction: rabbitTransaction);
+                        context: context,
+                        rabbitTransaction: rabbitTransaction,
+                        paymentMethod: orderSummary.paymentMethod);
                   } else {
-                    confirmCheckout(widget.tableID, context: context)
+                    confirmCheckout(widget.tableID,
+                            context: context,
+                            paymentMethod: orderSummary.paymentMethod)
                         .then((value) {
                       Navigator.push(
                           context,
@@ -135,7 +141,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
             double totalPrice = snapshot.data?.totalPrice ?? 0;
             double discount = snapshot.data?.discount ?? 0;
             double finalPrice = snapshot.data?.finalPrice ?? 0;
-
+            double chargePrice = snapshot.data?.chargePrice ?? 0;
             return Column(children: [
               _buildOrderList(
                 list: checkoutOrderList,
@@ -145,7 +151,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
               _buildTotalSummary(context,
                   totalPrice: totalPrice,
                   discount: discount,
-                  finalPrice: finalPrice)
+                  finalPrice: finalPrice,
+                  chargePrice: chargePrice)
             ]);
           } else {
             return const Center(child: PrimaryCircularProgressIndicator());
@@ -310,6 +317,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
 
   _buildTotalSummary(BuildContext context,
       {required double totalPrice,
+      required double chargePrice,
       required double discount,
       required double finalPrice}) {
     return Container(
@@ -346,6 +354,23 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     Text(
                       '-฿ ${discount.toStringAsFixed(1)}',
                       style: kPrimaryTextStyle.copyWith(color: kThemeColor),
+                    ),
+                  ],
+                )
+              : Container(),
+          chargePrice > 0
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Charge Price',
+                      textAlign: TextAlign.start,
+                      overflow: TextOverflow.ellipsis,
+                      style: kPrimaryTextStyle,
+                    ),
+                    Text(
+                      '-฿ ${discount.toStringAsFixed(1)}',
+                      style: kPrimaryTextStyle,
                     ),
                   ],
                 )

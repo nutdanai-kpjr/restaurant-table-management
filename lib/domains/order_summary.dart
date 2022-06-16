@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:restaurant_table_management/domains/order.dart';
 
 //Available Paymentmethod CASH, RABBIT_CARD, CREDIT_CARD
@@ -8,6 +6,7 @@ class OrderSummary {
   double totalPrice;
   double discount;
   double finalPrice;
+  double chargePrice;
   DateTime checkInTime;
   DateTime checkOutTime;
   String paymentMethod;
@@ -17,6 +16,7 @@ class OrderSummary {
       required this.finalPrice,
       required this.checkInTime,
       required this.checkOutTime,
+      this.chargePrice = 0,
       this.paymentMethod = "CASH",
       this.discount = 0});
   factory OrderSummary.fromJson(Map<String, dynamic> parsedJson) {
@@ -24,6 +24,7 @@ class OrderSummary {
         discount: parsedJson['discount'] ?? 0,
         totalPrice: parsedJson['totalPrice'] ?? 0,
         finalPrice: parsedJson['finalPrice'] ?? parsedJson['totalPrice'] ?? 0,
+        chargePrice: parsedJson['chargePrice'] ?? 0,
         checkInTime: DateTime.parse(parsedJson['checkInTime']),
         checkOutTime: DateTime.parse(parsedJson['checkOutTime']),
         paymentMethod: parsedJson['paymentMethod'] ?? "CASH",
@@ -38,6 +39,7 @@ class OrderSummary {
         checkInTime = DateTime.now(),
         checkOutTime = DateTime.now(),
         discount = 0,
+        chargePrice = 0,
         paymentMethod = "CASH";
 
   Map<String, dynamic> toJson() {
@@ -45,6 +47,7 @@ class OrderSummary {
       'discount': discount,
       'totalPrice': totalPrice,
       'finalPrice': finalPrice,
+      'chargePrice': chargePrice,
       'checkInTime': checkInTime.toIso8601String(),
       'checkOutTime': checkOutTime.toIso8601String(),
       'paymentMethod': paymentMethod,

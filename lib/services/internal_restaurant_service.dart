@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:restaurant_table_management/domains/menu_sales.dart';
 import 'package:restaurant_table_management/domains/order.dart';
 import 'package:restaurant_table_management/services/service.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -27,11 +28,21 @@ Future<List<Order>> getOrderHistory({required context}) async {
   }
 }
 
-Future<bool> downloadReport() async {
+Future<bool> downloadReport(String timeFrame) async {
+//  timeFrame could be  'Today','This Week','This Month','All Time'
+  var reportUrl = 'getDayReport';
+  if (timeFrame == 'This Week') {
+    reportUrl = 'getWeekReport';
+  } else if (timeFrame == 'This Month') {
+    reportUrl = 'getMonthReport';
+  } else if (timeFrame == 'All Time') {
+    reportUrl = 'getAllReport';
+  }
+
   // String filePath = '/storage/emulated/0/Downloads/report.csv';
 
   return await launchUrlString(
-    '$internalBaseUrl/getWeekReport',
+    '$internalBaseUrl/$reportUrl',
     mode: LaunchMode.externalApplication,
   );
 }

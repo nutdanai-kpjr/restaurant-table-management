@@ -4,7 +4,7 @@ import 'package:restaurant_table_management/components/buttons/primary_button.da
 import 'package:restaurant_table_management/constants.dart';
 
 // const String baseUrl = 'http://localhost:50001/training-ws/';
-const String baseUrl = 'http://10.0.2.2:50001/training-ws'; // for emulator
+const String baseUrl = 'http://10.0.2.2:50001/restaurant'; // for emulator
 //
 
 const String mockUpUrl = 'assets/json/';

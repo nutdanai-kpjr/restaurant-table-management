@@ -13,6 +13,7 @@ import 'package:restaurant_table_management/services/rabbit_card_service.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
 import '../domains/menu.dart';
+import '../domains/menu_sales.dart';
 import '../domains/table.dart' as domain;
 
 const String restaurantBaseUrl = '$baseUrl/api/v1/restaurant';
@@ -137,10 +138,16 @@ Future<OrderSummary> getCheckOutOrdersWithMembership(String tableID,
   }
 }
 
-Future<bool> confirmCheckout(String tableID, {required context}) async {
-  final response = await http.post(Uri.parse(
-    '$restaurantBaseUrl/exit?tableID=$tableID',
-  ));
+Future<bool> confirmCheckout(String tableID,
+    {required context, required paymentMethod}) async {
+  final requestBody =
+      json.encode({"tableID": tableID, "paymentMethod": paymentMethod});
+  final response = await http.post(
+      Uri.parse(
+        '$restaurantBaseUrl/exit',
+      ),
+      headers: {"Content-Type": "application/json"},
+      body: requestBody);
   // final response = await rootBundle.loadString('assets/json/get_orders.json');
   if (response.statusCode == 200) {
     return true;
@@ -255,19 +262,47 @@ Future<OrderSummary> updateCheckoutPaymentMethodAndGetOrderSummary(
 }
 
 Future<bool> confirmCheckoutWithRabbitCard(String tableID,
-    {required context, required RabbitTransaction rabbitTransaction}) async {
+    {required paymentMethod,
+    required context,
+    required RabbitTransaction rabbitTransaction}) async {
   if (await payWithRabbitCard(rabbitTransaction, context: context)) {
-    return await confirmCheckout(tableID, context: context);
+    return await confirmCheckout(tableID,
+        context: context, paymentMethod: paymentMethod);
   } else {
     return false;
   }
 }
 
 Future<bool> confirmCheckoutWithATMCard(String tableID,
-    {required context, required ATMTransaction atmTransaction}) async {
+    {required paymentMethod,
+    required context,
+    required ATMTransaction atmTransaction}) async {
   if (await payWithATMCard(atmTransaction, context: context)) {
-    return await confirmCheckout(tableID, context: context);
+    return await confirmCheckout(tableID,
+        context: context, paymentMethod: paymentMethod);
   } else {
     return false;
+  }
+}
+
+Future<List<MenuSales>> getMenuHistory({required context}) async {
+  final response =
+      await http.get(Uri.parse('$restaurantBaseUrl/getMenuHistory'));
+
+// final response = await rootBundle.loadString('assets/json/get_menu.json');
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    var parsedJson = jsonDecode(response.body);
+    List<MenuSales> results =
+        parsedJson.map<MenuSales>((m) => MenuSales.fromJson(m)).toList();
+    results.sort((a, b) => b.quantity.compareTo(a.quantity));
+    return results.length > 3 ? results.sublist(0, 3) : results;
+  } else {
+    var body = jsonDecode(response.body);
+    await showErrorDialog(context, body);
+    return [];
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+
   }
 }
