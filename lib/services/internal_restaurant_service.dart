@@ -1,9 +1,8 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:restaurant_table_management/domains/order.dart';
-import 'package:restaurant_table_management/domains/order_summary.dart';
 import 'package:restaurant_table_management/services/service.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 const String internalBaseUrl = '$baseUrl/api/v1/internal';
 
@@ -26,4 +25,13 @@ Future<List<Order>> getOrderHistory({required context}) async {
     // then throw an exception.
 
   }
+}
+
+Future<bool> downloadReport() async {
+  // String filePath = '/storage/emulated/0/Downloads/report.csv';
+
+  return await launchUrlString(
+    '$internalBaseUrl/getWeekReport',
+    mode: LaunchMode.externalApplication,
+  );
 }

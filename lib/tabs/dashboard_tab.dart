@@ -8,6 +8,7 @@ import 'package:restaurant_table_management/components/primary_list_item.dart';
 import 'package:restaurant_table_management/components/secondary_list_item.dart';
 import 'package:restaurant_table_management/constants.dart';
 import 'package:restaurant_table_management/domains/order.dart';
+import 'package:restaurant_table_management/services/internal_restaurant_service.dart';
 import 'package:restaurant_table_management/services/restaurant_service.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
@@ -152,6 +153,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
             width: double.infinity,
             title: 'Download CSV',
             onPressed: () async {
+              await downloadReport();
               // await getTableList(context: context);
             },
           ),
