@@ -38,10 +38,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
   late ATMTransaction atmTransaction;
 
   PaymentMethod paymentMethod = PaymentMethod();
-  TextEditingController atmCardCtrl = TextEditingController();
-  TextEditingController atmPinCtrl = TextEditingController();
-  TextEditingController rabbitCardCtrl = TextEditingController();
-  TextEditingController rabbitPinCtrl = TextEditingController();
+  TextEditingController atmCardCtrl =
+      TextEditingController(text: '7843545676878072');
+  TextEditingController atmPinCtrl = TextEditingController(text: '225544');
+  TextEditingController rabbitCardCtrl =
+      TextEditingController(text: '1112223334445');
+  TextEditingController rabbitPinCtrl = TextEditingController(text: '1111');
 
   @override
   void initState() {

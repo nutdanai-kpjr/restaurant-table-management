@@ -1,4 +1,4 @@
-const String shopAccountNumber = "7193390730";
+const String shopAccountNumber = "2243574734";
 
 class ATMTransaction {
   final String atmId;
@@ -13,9 +13,9 @@ class ATMTransaction {
       required this.amount});
 
   Map<String, dynamic> toJson() => {
-        'atmId': atmId,
+        'atmID': atmId,
         'pin': atmPin,
-        'amount': amount,
         'toAccountNumber': shopAccountNumber,
+        'amount': amount,
       };
 }

@@ -139,7 +139,7 @@ Future<OrderSummary> getCheckOutOrdersWithMembership(String tableID,
 Future<bool> confirmCheckout(String tableID,
     {required context, required paymentMethod}) async {
   final requestBody =
-      json.encode({"tableID": tableID, "paymentMethod": paymentMethod});
+      json.encode({"tableID": tableID, "payment": paymentMethod});
   final response = await http.post(
       Uri.parse(
         '$restaurantBaseUrl/exit',
@@ -236,7 +236,6 @@ Future<OrderSummary> updateCheckoutPaymentMethodAndGetOrderSummary(
     required OrderSummary orderSummary}) async {
   final requestBody =
       json.encode({"wrapper": orderSummary, "payment": newPaymentMethod});
-
   final response = await http.post(
       Uri.parse(
         '$restaurantBaseUrl/updatePaymentMethod',
