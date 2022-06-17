@@ -34,7 +34,6 @@ Future<bool> addMember(Member newMember, {required context}) async {
       ),
       headers: {"Content-Type": "application/json"},
       body: json.encode(newMember.toJson()));
-  print(response);
   if (response.statusCode == 200) {
     return true;
   } else {

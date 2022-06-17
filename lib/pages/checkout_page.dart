@@ -362,7 +362,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Charge Price',
+                      'Charge',
                       textAlign: TextAlign.start,
                       overflow: TextOverflow.ellipsis,
                       style: kPrimaryTextStyle,
