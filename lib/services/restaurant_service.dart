@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:restaurant_table_management/domains/atm_transaction.dart';
 import 'package:restaurant_table_management/domains/order.dart';
 import 'package:restaurant_table_management/domains/order_summary.dart';
-import 'package:restaurant_table_management/domains/payment_method.dart';
 import 'package:restaurant_table_management/domains/rabbit_transaction.dart';
 import 'package:restaurant_table_management/services/bank_service.dart';
 import 'package:restaurant_table_management/services/internal_restaurant_service.dart';
@@ -13,7 +12,6 @@ import 'package:restaurant_table_management/services/rabbit_card_service.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
 import '../domains/menu.dart';
-import '../domains/menu_sales.dart';
 import '../domains/table.dart' as domain;
 
 const String restaurantBaseUrl = '$baseUrl/api/v1/restaurant';
@@ -251,7 +249,6 @@ Future<OrderSummary> updateCheckoutPaymentMethodAndGetOrderSummary(
     // If the server did return a 200 OK response,
     var parsedJson = jsonDecode(response.body);
     OrderSummary result = OrderSummary.fromJson(parsedJson);
-
     return result;
   } else {
     var body = jsonDecode(response.body);
@@ -282,27 +279,5 @@ Future<bool> confirmCheckoutWithATMCard(String tableID,
         context: context, paymentMethod: paymentMethod);
   } else {
     return false;
-  }
-}
-
-Future<List<MenuSales>> getMenuHistory({required context}) async {
-  final response =
-      await http.get(Uri.parse('$restaurantBaseUrl/getMenuHistory'));
-
-// final response = await rootBundle.loadString('assets/json/get_menu.json');
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    var parsedJson = jsonDecode(response.body);
-    List<MenuSales> results =
-        parsedJson.map<MenuSales>((m) => MenuSales.fromJson(m)).toList();
-    results.sort((a, b) => b.quantity.compareTo(a.quantity));
-    return results.length > 3 ? results.sublist(0, 3) : results;
-  } else {
-    var body = jsonDecode(response.body);
-    await showErrorDialog(context, body);
-    return [];
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-
   }
 }

@@ -5,13 +5,13 @@ import 'package:restaurant_table_management/domains/atm_transaction.dart';
 import 'package:restaurant_table_management/domains/rabbit_transaction.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
-const String bankBaseUrl = 'http://10.0.2.2:50001/training-ws/'; // for emulator
+const String bankBaseUrl = 'http://192.168.86.71/banking'; // for emulator
 // http://localhost:50001/training-ws/
-const String bankControllerUrl = '$bankBaseUrl/api/v1/rabbit';
+const String bankControllerUrl = '$bankBaseUrl/api/v1/ATM/account';
 
 Future<bool> payWithATMCard(ATMTransaction atmTransaction,
     {required context}) async {
-  final response = await http.post(Uri.parse('$bankControllerUrl/atmpay'),
+  final response = await http.post(Uri.parse('$bankControllerUrl/chargeATM'),
       headers: {"Content-Type": "application/json"},
       body: json.encode(atmTransaction));
 

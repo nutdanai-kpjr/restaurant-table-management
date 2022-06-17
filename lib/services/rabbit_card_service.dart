@@ -5,7 +5,7 @@ import 'package:restaurant_table_management/domains/rabbit_transaction.dart';
 import 'package:restaurant_table_management/services/service.dart';
 
 const String rabbitCardbaseUrl =
-    'http://10.0.2.2:50001/training-ws/'; // for emulator
+    'http://192.168.86.80:50001/bts'; // for emulator
 // http://localhost:50001/training-ws/
 const String rabbitControllerUrl = '$rabbitCardbaseUrl/api/v1/rabbit';
 

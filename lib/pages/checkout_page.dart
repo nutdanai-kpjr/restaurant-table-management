@@ -79,15 +79,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
             Expanded(
               child: WideButton(
                 title: 'Confirm',
-                onPressed: () {
-                  print(paymentMethod.method);
+                onPressed: () async {
                   if (paymentMethod.isCreditCard) {
                     atmTransaction = ATMTransaction(
                       atmId: atmCardCtrl.text,
                       atmPin: atmPinCtrl.text,
                       amount: orderSummary.finalPrice,
                     );
-                    confirmCheckoutWithATMCard(tableID,
+                    await confirmCheckoutWithATMCard(tableID,
                         context: context,
                         atmTransaction: atmTransaction,
                         paymentMethod: orderSummary.paymentMethod);
@@ -97,21 +96,19 @@ class _CheckOutPageState extends State<CheckOutPage> {
                       rabbitPass: rabbitPinCtrl.text,
                       amount: orderSummary.finalPrice,
                     );
-                    confirmCheckoutWithRabbitCard(tableID,
+                    await confirmCheckoutWithRabbitCard(tableID,
                         context: context,
                         rabbitTransaction: rabbitTransaction,
                         paymentMethod: orderSummary.paymentMethod);
                   } else {
-                    confirmCheckout(widget.tableID,
-                            context: context,
-                            paymentMethod: orderSummary.paymentMethod)
-                        .then((value) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const MainPage()));
-                    });
+                    await confirmCheckout(widget.tableID,
+                        context: context,
+                        paymentMethod: orderSummary.paymentMethod);
                   }
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const MainPage()));
                 },
               ),
             ),
@@ -141,7 +138,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
             double totalPrice = snapshot.data?.totalPrice ?? 0;
             double discount = snapshot.data?.discount ?? 0;
             double finalPrice = snapshot.data?.finalPrice ?? 0;
-            double chargePrice = snapshot.data?.chargePrice ?? 0;
+            double charge = snapshot.data?.charge ?? 0;
             return Column(children: [
               _buildOrderList(
                 list: checkoutOrderList,
@@ -152,7 +149,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   totalPrice: totalPrice,
                   discount: discount,
                   finalPrice: finalPrice,
-                  chargePrice: chargePrice)
+                  charge: charge)
             ]);
           } else {
             return const Center(child: PrimaryCircularProgressIndicator());
@@ -174,7 +171,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
           itemBuilder: (context, index) {
             var order = list[index];
             return PrimaryListItem(
-                height: 0.06,
+                height: 0.07,
                 isExapandable: true,
                 titleFlex: 7,
                 title: order.id,
@@ -295,7 +292,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
         title: 'Enter Rabbit Card ID',
         inputFormatters: [
           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-          LengthLimitingTextInputFormatter(12)
+          LengthLimitingTextInputFormatter(13)
         ],
         keyboardType: TextInputType.number,
       ),
@@ -317,7 +314,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
 
   _buildTotalSummary(BuildContext context,
       {required double totalPrice,
-      required double chargePrice,
+      required double charge,
       required double discount,
       required double finalPrice}) {
     return Container(
@@ -358,7 +355,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   ],
                 )
               : Container(),
-          chargePrice > 0
+          charge > 0
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -369,7 +366,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                       style: kPrimaryTextStyle,
                     ),
                     Text(
-                      '-฿ ${discount.toStringAsFixed(1)}',
+                      '฿ ${charge.toStringAsFixed(1)}',
                       style: kPrimaryTextStyle,
                     ),
                   ],

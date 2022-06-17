@@ -19,7 +19,7 @@ class OverviewItem extends StatelessWidget {
           vertical: kHeight(context) * 0.015,
           horizontal: kHeight(context) * 0.0075),
       width: kWidth(context) * 0.25,
-      height: kWidth(context) * 0.25,
+      height: kWidth(context) * 0.225,
       decoration: BoxDecoration(
         border: Border.all(color: indicatorColor.withOpacity(0.5), width: 2.0),
         borderRadius: BorderRadius.circular(15.0),

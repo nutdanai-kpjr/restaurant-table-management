@@ -7,7 +7,6 @@ import 'package:restaurant_table_management/components/secondary_list_item.dart'
 import 'package:restaurant_table_management/constants.dart';
 import 'package:restaurant_table_management/domains/menu_sales.dart';
 import 'package:restaurant_table_management/services/internal_restaurant_service.dart';
-import 'package:restaurant_table_management/services/restaurant_service.dart';
 
 import '../components/primary_circular_progress_indicator.dart';
 
@@ -122,7 +121,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
                     itemBuilder: (context, index) {
                       var menuSales = topMenus[index];
                       return SecondaryListItem(
-                          title: '${menuSales.menuID}',
+                          title: '${menuSales.name}',
                           rightSideChildren: [
                             Text('${menuSales.quantity} Dishes',
                                 style: kPrimaryTextStyle)

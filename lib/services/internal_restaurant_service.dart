@@ -46,3 +46,24 @@ Future<bool> downloadReport(String timeFrame) async {
     mode: LaunchMode.externalApplication,
   );
 }
+
+Future<List<MenuSales>> getMenuHistory({required context}) async {
+  final response = await http.get(Uri.parse('$internalBaseUrl/getTopMenu'));
+
+// final response = await rootBundle.loadString('assets/json/get_menu.json');
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    var parsedJson = jsonDecode(response.body);
+    List<MenuSales> results =
+        parsedJson.map<MenuSales>((m) => MenuSales.fromJson(m)).toList();
+    results.sort((a, b) => b.quantity.compareTo(a.quantity));
+    return results.length > 3 ? results.sublist(0, 3) : results;
+  } else {
+    var body = jsonDecode(response.body);
+    await showErrorDialog(context, body);
+    return [];
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+
+  }
+}
